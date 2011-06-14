@@ -49,7 +49,7 @@ class event_calendar extends baseModule {
 
         $sql = "SELECT n.*, c.title as categoryTitle FROM %pfx%event_calendar n, %pfx%event_calendar_category c 
                 WHERE ".$categories."deactivate = 0 AND category_rsn = c.rsn".$date_limit."
-                 ORDER BY event_date, title LIMIT $start, ".$pConf['itemsPerPage'];
+                 ORDER BY event_date, title LIMIT ".$pConf['itemsPerPage']." OFFSET ".$start;
 
         $sqlCount = "SELECT count(*) as eventcount
             FROM %pfx%event_calendar n, %pfx%event_calendar_category c
@@ -92,7 +92,7 @@ class event_calendar extends baseModule {
         
         
         if(getArgv('getEventsInMonth') && getArgv('getEventsFrom') && getArgv('getEventsTo')) {
-            $sql = "SELECT FROM_UNIXTIME(event_date, '%Y%m%d') AS form_date 
+            $sql = "SELECT FROM_UNIXTIME(event_date, '%Y%m%d') AS form_date, event_date, event_date_end 
                     FROM %pfx%event_calendar
                     WHERE ".$categories."deactivate = 0 
                         AND event_date >= ".getArgv('getEventsFrom', 1)." AND event_date <= ".getArgv('getEventsTo', 1)."
@@ -102,6 +102,16 @@ class event_calendar extends baseModule {
             if($dates) {
                 foreach($dates as $date) {
                     $returnDate[$date['form_date']] = true;
+                    //date period
+                    if($date['event_date_end'] > 0 &&  $date['event_date_end'] > $date['event_date']) {
+                    		$dayDiff = floor(($date['event_date_end']-$date['event_date'])/(24*60*60));
+                    		while($dayDiff > 0) {
+                    			$tempDate = $date['event_date']+($dayDiff*(24*60*60));
+                    			$tempFormDate = date('Ymd', $tempDate);
+                    			$returnDate[$tempFormDate] = true;
+                    			$dayDiff--;
+                    		}
+                    }
                 }
             }           
             json($returnDate);        
@@ -133,7 +143,9 @@ class event_calendar extends baseModule {
             $date_limit = " AND event_date > ".$event_from;
         if($event_to)
              $date_limit .= " AND event_date < ".$event_to;
-        
+        if($event_from && $event_to && $event_from < $event_to) {
+        		$date_limit = " AND ((event_date > ".$event_from." AND event_date < ".$event_to.") OR (event_date_end > event_date AND event_date_end <= ".$event_to." AND event_date_end > ".$event_from."))";
+        }
             
              
          if(!$pConf['itemsPerPage'] || $pConf['itemsPerPage'] < 1)
@@ -143,7 +155,7 @@ class event_calendar extends baseModule {
 
         $sql = "SELECT n.*, c.title as categoryTitle FROM %pfx%event_calendar n, %pfx%event_calendar_category c 
                 WHERE ".$categories."deactivate = 0 AND category_rsn = c.rsn".$date_limit."
-                 ORDER BY event_date, title LIMIT 0, ".$pConf['itemsPerPage'];       
+                 ORDER BY event_date, title LIMIT ".$pConf['itemsPerPage'];       
 
        
         $list = dbExFetch($sql, DB_FETCH_ALL);        
@@ -342,7 +354,7 @@ class event_calendar extends baseModule {
 
         $sql = "SELECT n.*, c.title as categoryTitle FROM %pfx%event_calendar n, %pfx%event_calendar_category c 
                 WHERE ".$categories."deactivate = 0 AND category_rsn = c.rsn".$date_limit."
-                 ORDER BY event_date, title LIMIT 0, ".$pConf['eventCount'];      
+                 ORDER BY event_date, title LIMIT ".$pConf['eventCount'];      
 
        
         $list = dbExFetch($sql, DB_FETCH_ALL);        
