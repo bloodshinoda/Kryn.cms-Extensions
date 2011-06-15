@@ -10,4 +10,6 @@ cloned git repository.
 
  install.sh install <extensionCode> <targetKrynCms> 
 
+ Use `install.sh help` to get more informations.
+
 4. Open the administration of Kryn.cms and press Activate in the extension window.
