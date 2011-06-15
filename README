@@ -1,15 +1,25 @@
 Development
 
-To install, use and develop a extension, you need to do some steps to work
+To install, use and develop on one of these extensions, you need to do some steps to work
 without coping the files around from your working Kryn.cms installation to the
-cloned git repository.
+cloned git repository. 
+
+Please note:
+You only need to do this steps, when you want to develop on these extensions.
+When you just wanna install a extension and use it, go to kryn.org/extensions
+or install a extension directly through the administration of your installation.
 
 1. Clone the repository.
 2. Install newest Kryn.cms, if you dont have already one.
 3. Use the install.sh to create all symbolic links to your installed Kryn.cms.
 
- install.sh install <extensionCode> <targetKrynCms> 
+ install.sh install <extensionCode> <targetKrynCms>
 
- Use `install.sh help` to get more informations.
+Example:
+
+ ./install.sh install newsletter /srv/www/kryn.cms/
+ ./install.sh remove newsletter /srv/www/kryn.cms/
+
+Use `install.sh help` to get more informations.
 
 4. Open the administration of Kryn.cms and press Activate in the extension window.
