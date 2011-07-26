@@ -1,6 +1,6 @@
 {
   "name": "rotator",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "owner": "1",
   "title": {
     "de": "Bild- und Inhalts-Rotator",
@@ -54,7 +54,7 @@
         },
         "folder": {
           "label": "Folder",
-          "type": "string"
+          "type": "fileChooser"
         },
         "thumpSize": {
           "label": "Thumpnail size",

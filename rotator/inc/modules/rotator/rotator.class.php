@@ -41,115 +41,46 @@ class rotator extends modul {
         kryn::addJs( 'rotator/js/imageRotator.'.$pConf['template'].'.js' );
         $images = array();
 
-        if( empty($pConf['folder']) ) return;
-        $dir = 'inc/template/'.$pConf['folder'];
-        $files = kryn::readFolder('inc/template/'.$pConf['folder'], true);
-        natcasesort( $files );
+       if( empty($pConf['folder']) ) 
+        		return;    
+        
+       $dir = str_replace('//', '/', $pConf['folder']);
+        
+        
+       $cName = 'imageRotatorFolderCache-'.date('dmY').'-'.md5($pConf['folder']);
+       if(class_exists('cache'))
+		 	$files = cache::get($cName);
+		 else		
+		 	$files = kryn::getCache($cName);		
+       if(!$files || empty($files)) {
+        		$files = kryn::readFolder('inc/template/'.$pConf['folder'], true);
+        		natcasesort( $files );
+        		if(class_exists('cache'))
+        			cache::set($cName, $files);        			
+        		else
+        			kryn::setCache($cName, $files);
+       }
+        
+       if(empty($files))
+        		return;
 
-        self::$cacheDir = 'inc/template/'.$pConf['folder'].'.rotatorImages/';
-        if( !file_exists(self::$cacheDir) )
-            mkdir( self::$cacheDir );
-
-        foreach( $files as $file ){
-            error_log( $file );
-            if( $file == '.' || $file == '..' ) continue;
-            $id = filemtime( $dir . $file ) . '.' . $file;
-            if(! file_exists( self::$cacheDir.$id ) ){
-                self::renderImage( $pConf, $dir, $file );
+       foreach( $files as $file ){
+            if( 
+            	$file == '.' || $file == '..' || (
+            	stripos($file, '.jpg') === false && stripos($file, '.jpeg') === false && stripos($file, '.png') === false && stripos($file, '.gif') === false)) {
+            		continue;            	
             }
-            list( $oriWidth, $oriHeight, $type ) = getimagesize( $dir.$file );
-            if( $type >= 1 && $type <=3 ){
-                $nfile = array(
-                    'thump' => self::$cacheDir . 'thump.' . $file,
-                    'file' => self::$cacheDir . filemtime( $dir . $file ) . '.' .$file
-                );
-                $images[] = $nfile;
-            }
+            $nfile = array(
+                    'thump' => resizeImageCached( $dir.$file, $pConf['thumpSize'], true ),
+            		  'file' => resizeImageCached( $dir.$file, $pConf['bigSize'], false )
+            );
+            $images[] = $nfile;
+   
         }
         tAssign( 'images', $images );
         tAssign( 'pConf', $pConf );
 
         return tFetch( 'rotator/imageRotator/'.$pConf['template'].'.tpl' );
-    }
-    
-    function renderImage( $pConf, $pDir, $pFile ){
-        $file = $pDir.$pFile;
-        list( $oriWidth, $oriHeight, $type ) = getimagesize( $file );
-        switch( $type ){
-            case 1:
-                $imagecreate = 'imagecreatefromgif';
-                $imagesave = 'imagegif';
-                break;
-            case 2:
-                $imagecreate = 'imagecreatefromjpeg';
-                $imagesave = 'imagejpeg';
-                break;
-            case 3:
-                $imagecreate = 'imagecreatefrompng';
-                $imagesave = 'imagepng';
-                break;
-        }
-        if(! $imagecreate )
-            return;
-        $img = $imagecreate( $file );
-
-        $cacheThumpFile = self::$cacheDir.'thump.'.$pFile;
-        $cacheFile = self::$cacheDir . filemtime( $file ) . '.' . $pFile;
-        
-        list( $thumpWidth, $thumpHeight ) = explode( 'x', $pConf['thumpSize'] );
-        list( $newWidth, $newHeight ) = explode( 'x', $pConf['bigSize'] );
-        
-        //
-        // render Thump
-        //
-        $thumpImage = imagecreatetruecolor( $thumpWidth, $thumpHeight );
-
-        if( $oriWidth > $oriHeight ){
-
-            //resize mit hoehe = $tempheight, width = auto;
-            
-            $ratio = $thumpHeight / ( $oriHeight / 100 );
-            $_width = ceil($oriWidth * $ratio / 100);
-
-            $top = 0;
-            if( $_width < $thumpWidth) { //berechnung ergibt, dass neue breite zu klein ist => anpassen auf thumpWidth
-                $ratio = $_width / ($thumpWidth/100);
-                $nHeight = $thumpHeight * $ratio / 100;
-                $top =  ($thumpHeight - $nHeight)/2;
-                $_width = $thumpWidth;
-            }
-
-            $tempImg = imagecreatetruecolor( $_width, $thumpHeight );
-            imagecopyresampled( $tempImg, $img, 0, 0, 0, 0, $_width, $thumpHeight, $oriWidth, $oriHeight);//schneide temp-thumpnail raus
-            $_left = ($_width/2) - ($thumpWidth/2);
-
-            imagecopyresampled( $thumpImage, $tempImg, 0, 0, $_left, 0, $thumpWidth, $thumpHeight, $thumpWidth, $thumpHeight );//klebe temp-thumpnail auf thumpnail (mit richtiger position x)
-
-        } else {
-            $ratio = $thumpWidth / ( $oriWidth / 100 );
-            $_height = ceil($oriHeight * $ratio / 100);
-            $tempImg = imagecreatetruecolor( $thumpWidth, $_height );
-            imagecopyresampled( $tempImg, $img, 0, 0, 0, 0, $thumpWidth, $_height, $oriWidth, $oriHeight );
-            $_top = ($_height/2) - ($thumpHeight/2);
-            imagecopyresampled( $thumpImage, $tempImg, 0, 0, 0, $_top, $thumpWidth, $thumpHeight, $thumpWidth, $thumpHeight );
-        }
-        
-        //render image(big)
-        if( $oriHeight > $oriWidth ){
-            $ratio = $newHeight / ( $oriHeight / 100 );
-            $_width = ceil($oriWidth * $ratio / 100);
-            $newImage = imagecreatetruecolor( $_width, $newHeight );
-            imagecopyresampled( $newImage, $img, 0, 0, 0, 0, $_width, $newHeight, $oriWidth, $oriHeight);
-        } else {
-            $ratio = $newWidth / ( $oriWidth / 100 );
-            $_height = ceil($oriHeight * $ratio / 100);
-            $newImage = imagecreatetruecolor( $newWidth, $_height );
-            imagecopyresampled( $newImage, $img, 0, 0, 0, 0, $newWidth, $_height, $oriWidth, $oriHeight);
-        }
-        
-        //save
-        $imagesave( $newImage, $cacheFile );
-        $imagesave( $thumpImage, $cacheThumpFile );
     }
 
     function getPlugins(){
