@@ -1,7 +1,7 @@
 <?php
 
 class event_calendar extends baseModule {    
-
+	
     public function eventList( $pConf ){
         $this->eventFileExport($pConf);
         
@@ -187,7 +187,6 @@ class event_calendar extends baseModule {
     
         $id = getArgv('e2')+0;
         if( $id > 0 ){
-            //$cats = implode($pConf['category_rsn'], ",");
             
             $categories = "";
             if(is_array($pConf['category_rsn']) && count ($pConf['category_rsn']) > 1)
@@ -195,10 +194,7 @@ class event_calendar extends baseModule {
             else if(is_array($pConf['category_rsn']) && count ($pConf['category_rsn']) == 1)      
                 $categories = "category_rsn =".($pConf['category_rsn'][0]+0)." AND ";  
             
-            
-            
-           // $event = dbTableFetch('event_calendar',1, $categories.'rsn = '.$id.' AND deactivate = 0');
-            
+          
             $event = dbExFetch("SELECT n.*, c.title as categoryTitle FROM %pfx%event_calendar n, %pfx%event_calendar_category c  
                                         WHERE ".$categories."category_rsn = c.rsn AND n.rsn = ".$id." AND deactivate = 0", 1);
        
@@ -244,6 +240,18 @@ class event_calendar extends baseModule {
     
         $monthToView = (getArgv('e1')+0 > 0) ? getArgv('e1')+0 : date('n');
         $yearToView = (getArgv('e2')+0 > 0) ? getArgv('e2')+0 : date('Y');
+        
+        
+        //only within 10 years in the future and in the past
+        $tempToView = mktime(0,0,0, $monthToView, 1, $yearToView);
+        $tempNow = time();
+        $tenYears = 60*60*24*365*10;
+        
+        if(($tempNow+$tenYears) <  $tempToView)
+        		$yearToView = date('Y')+10;
+        else if(($tempNow-$tenYears) > $tempToView)
+        		$yearToView = date('Y')-10;
+        
         
         $toView = array('year' => $yearToView, 'month' => $monthToView, 'today' => mktime(0,0,0));
         tAssign('toView', $toView);
@@ -334,7 +342,7 @@ class event_calendar extends baseModule {
         $page = ($page==0)?1:$page;
 
         
-        $event_from = mktime();
+        $event_from = time();
         $event_to = false;
         $date_limit = " AND event_date > ".$event_from;
 
