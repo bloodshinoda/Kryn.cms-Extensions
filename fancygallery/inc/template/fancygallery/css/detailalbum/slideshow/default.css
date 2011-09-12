@@ -22,7 +22,7 @@ Notes:
 	Override at your own risk.
 */
 
-.slideshow {
+.fancygallery_slide .slideshow {
 	display: block; position: relative; z-index: 0; 
 }
 .slideshow-images {
@@ -50,7 +50,7 @@ Notes:
 	Customize the visible / prev / next classes to effect the slideshow transitions: fading, wiping, etc.
 */
 
-.slideshow-images {
+.fancygallery_slide .slideshow-images {
 	height: 300px; width: 400px;
 }		
 .slideshow-images-visible { 
@@ -72,7 +72,7 @@ Notes:
 	Customize these classes to your usage of Slideshow.
 */
 
-.slideshow {
+.fancygallery_slide .slideshow {
 	height: auto; margin: 0 auto; width: 400px;
 }
 .slideshow a img {
@@ -89,8 +89,8 @@ Notes:
 	Customize the hidden / visible classes to affect the captions animation.
 */
 
-.slideshow-captions {
-	background: #000; bottom: 29px; color: #FFF; font: normal 12px/22px Arial, sans-serif; left: 0; overflow: hidden; position: absolute; text-indent: 10px; width: 100%; z-index: 10000;
+.fancygallery_slide .slideshow-captions {
+	background: #000; bottom: 0; color: #FFF; font: normal 12px/22px Arial, sans-serif; left: 0; overflow: hidden; position: absolute; text-indent: 10px; width: 100%; z-index: 10000;
 }
 .slideshow-captions-hidden {
 	height: 0; opacity: 0;
@@ -115,7 +115,7 @@ Notes:
 	Customize the hidden / visible classes to affect the controller animation.
 */
 
-.slideshow-controller {
+.fancygallery_slide .slideshow-controller {
 	background: url(controller.png) no-repeat; height: 48px; left: 50%; margin: -24px 0 0 -122px; overflow: hidden; position: absolute; top: 50%; width: 244px; z-index: 10000;
 }
 .slideshow-controller * {
@@ -175,7 +175,7 @@ Notes:
 	Customize the hidden / visible classes to affect the loader animation.
 */
 
-.slideshow-loader {
+.fancygallery_slide .slideshow-loader {
 	background: url(loader.png); height: 30px; right: 2px; position: absolute; top: 2px; width: 30px; z-index: 10001;
 }
 .slideshow-loader-hidden {
@@ -201,23 +201,23 @@ Notes:
 	Use the !important keyword to override FX without affecting performance.
 */
 
-.slideshow-thumbnails {
-	bottom: -100px; height: 120px; left: 0; position: absolute; width: 100%;
+.fancygallery_slide .slideshow-thumbnails {
+	bottom: -55px; height: 55px; left: 0; position: absolute; width: 100%;
 }
 .slideshow-thumbnails * {
 	margin: 0; padding: 0;
 }
 .slideshow-thumbnails li {
-	float: left; list-style: none; margin: -5px auto; padding: 0;
+	float: left; list-style: none;
 }
 .slideshow-thumbnails a {
-	display: block; float: left; outline: none; margin: 3px 3px 0 0; padding: 2px; border: 0;
+	display: block; float: left; outline: none; margin: 5px 5px 0 0; padding: 5px;
 }
 .slideshow-thumbnails a:hover {
 	background-color: #FF9 !important; opacity: 1 !important;
 }
 .slideshow-thumbnails img {
-	display: block; max-width: 100px; max-height: 100px;
+	display: block;
 }
 .slideshow-thumbnails-hidden {
 	background-color: #FFF; opacity: 0;

@@ -33,7 +33,7 @@
 			[{foreach from=$album.images item=image name="fgImageLoop"}
 		       '{$image.thumbLoc}'{if $smarty.foreach.fgImageLoop.last ne true},{/if}
 		    {/foreach}],
-			{literal}{{/literal} transition: 'back:in:out', width: 150, height: 100, resize: 'fill' {literal}}{/literal}
+			{ transition: 'back:in:out', width: 150, height: 100, resize: 'fill', thumbnails: false, controller: false }
 		);
   </script>
   {/foreach}
@@ -41,4 +41,3 @@
  
   {$smarty.capture.fancygalleryNavi}
 </div>
-{if $debug}<pre>{$debug}</pre>{/if}

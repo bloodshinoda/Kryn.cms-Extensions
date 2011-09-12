@@ -1,5 +1,5 @@
 {
-  "version": "0.0.4",
+  "version": "0.0.5",
   "owner": "93",
   "community": "1",
   "category": "2",
@@ -13,6 +13,7 @@
     "en": "gallery,images,albums,customizable"
   },
   "writableFiles": "inc\/template\/fancygallery\/*",
+  "depends": "slimbox >= 0.0.1",
   "db": {
     "fancygallery_category": {
       "rsn": [
@@ -347,64 +348,111 @@
         }
       }
     ],
-    "slideAlbum" : [
-      "Album slideshow",
+    "detailAlbum" : [
+      "Album showcase",
       {
-        "captions" : {
-          "label"	: "Show captions",
-          "type"	: "checkbox"
+        "addtitle" : {
+          "label"     : "Add title",
+          "type"      : "checkbox",
+          "value"     : 1
         },
-        "center" : {
-          "label"	: "Center images",
-          "type"	: "checkbox",
-          "value"	: 1
-        },
-        "controller" : {
-          "label"	: "Show controller",
-          "type"	: "checkbox"
-        },
-        "thumbnails" : {
-          "label"	: "Show thumbnails",
-          "type"	: "checkbox"
-        },
-        "loop" : {
-          "label"	: "Loop images",
-          "type"	: "checkbox",
-          "value"	: 1
-        },
-        "preload" : {
-          "label"	: "Preload images",
-          "desc"	: "Preloading loads all images at start rather than streaming image by image",
-          "type"	: "checkbox"
-        },
-        "width" : {
-          "label"	: "Width",
-          "desc"	: "Width value for the show as a whole integer, if a width value is not given the width of the album will be used.",
-          "type"	: "int"
-        },
-        "height" : {
-          "label"	: "Height",
-          "desc"	: "Height value for the show as a whole integer, if a height value is not given the height of the album will be used.",
-          "type"	: "int"
-        },
-        "delay" : {
-          "label"	: "Delay between slides",
-          "desc"	: "The delay between slide changes in milliseconds (1000 = 1 second)",
-          "type"	: "int",
-          "value"	: 2000
-        },
-        "duration" : {
-          "label"	: "Effect duration",
-          "desc"	: "The duration of the effect in milliseconds (1000 = 1 second)",
-          "type"	: "int",
-          "value"	: 750
-        },
-        "template" : {
-          "label"	: "Template",
-          "type"	: "files",
-          "withoutExtension" : true,
-          "directory" : "inc\/template\/fancygallery\/detailalbum\/",
-          "empty"	: false
+        "display" : {
+          "label"   : "Display style",
+          "type"    : "select",
+          "multi"   : false,
+          "tableItems" : [
+            {
+              "name"    : "",
+              "nameKey" : ""
+            },
+            {
+              "name"    : "Thumbnails",
+              "nameKey" : "thumbs"
+            },
+            {
+              "name"    : "Slideshow",
+              "nameKey" : "slideshow"
+            }
+          ],
+          "table_label" : "name",
+          "table_id"    : "nameKey",
+          "depends"     : {
+            "captions" : {
+              "needValue" : "slideshow",
+              "label"     : "Show captions",
+              "type"      : "checkbox"
+            },
+            "center" : {
+              "needValue" : "slideshow",
+              "label"     : "Center images",
+              "type"      : "checkbox",
+              "value"     : 1
+            },
+            "controller" : {
+              "needValue" : "slideshow",
+              "label"     : "Show controller",
+              "type"      : "checkbox"
+            },
+            "thumbnails" : {
+              "needValue" : "slideshow",
+              "label"     : "Show thumbnails",
+              "type"      : "checkbox"
+            },
+            "loop" : {
+              "needValue" : "slideshow",
+              "label"     : "Loop images",
+              "type"      : "checkbox",
+              "value"     : 1
+            },
+            "preload" : {
+              "needValue" : "slideshow",
+              "label"     : "Preload images",
+              "desc"      : "Preloading loads all images at start rather than streaming image by image",
+              "type"      : "checkbox"
+            },
+            "width" : {
+              "needValue" : "slideshow",
+              "label"     : "Width",
+              "desc"      : "Width value for the show as a whole integer, if a width value is not given the width of the album will be used.",
+              "type"      : "int"
+            },
+            "height" : {
+              "needValue" : "slideshow",
+              "label"     : "Height",
+              "desc"      : "Height value for the show as a whole integer, if a height value is not given the height of the album will be used.",
+              "type"      : "int"
+            },
+            "delay" : {
+              "needValue" : "slideshow",
+              "label"     : "Delay between slides",
+              "desc"      : "The delay between slide changes in milliseconds (1000 = 1 second)",
+              "type"      : "int",
+              "value"     : 2000
+            },
+            "duration" : {
+              "needValue" : "slideshow",
+              "label"     : "Effect duration",
+              "desc"      : "The duration of the effect in milliseconds (1000 = 1 second)",
+              "type"      : "int",
+              "value"     : 750
+            },
+            "template_slideshow" : {
+              "needValue": "slideshow",
+              "label"    : "Template",
+              "type"     : "files",
+              "withoutExtension" : true,
+              "directory": "inc\/template\/fancygallery\/detailalbum\/slideshow\/",
+              "empty"    : false 
+            },
+            "template_thumbs" : {
+              "needValue": "thumbs",
+              "label"    : "Template",
+              "type"     : "files",
+              "withoutExtension" : true,
+              "directory": "inc\/template\/fancygallery\/detailalbum\/thumbs\/",
+              "empty"    : false 
+            }
+          }
         }
       }
     ]
