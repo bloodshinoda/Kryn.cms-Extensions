@@ -345,7 +345,7 @@ var fancygallery_fancygallery = new Class({
 	
 	_uploadCallback: function(pFile, pFileLocation)
 	{
-		//this.tabButtons['images'].startTip(_('Adding image(s) ...'));
+		this.tabButtons['images'].startTip(_('Adding image(s) ...'));
 		
 		new Request.JSON({
 			url: this.pGlobal+'add/image',
@@ -354,7 +354,7 @@ var fancygallery_fancygallery = new Class({
 			onComplete: function(res) {
 				if(res)
 				{
-					//this.tabButtons['images'].stopTip(_('Added!'));
+					this.tabButtons['images'].stopTip(_('Added!'));
 					
 					// Remove from upload object
 					this.multiUploadFileContainer.empty();
@@ -365,8 +365,8 @@ var fancygallery_fancygallery = new Class({
 					// Make it sortable
 					this._createSortableImages();
 				}
-				//else
-					//this.tabButtons['images'].stopTip(_('Adding images failed!'));
+				else
+					this.tabButtons['images'].stopTip(_('Adding images failed!'));
 				
 			}.bind(this)
 		}).post({
@@ -727,7 +727,7 @@ var fancygallery_fancygallery = new Class({
 	
 	showImage: function(event, index)
 	{
-		//this.tabButtons['images'].startTip(_('Showing image ...'));
+		this.tabButtons['images'].startTip(_('Showing image ...'));
 		var iF = this.imageFields[index];
 		
 		new Request.JSON({
@@ -738,7 +738,7 @@ var fancygallery_fancygallery = new Class({
 			{
 				if(res)
 				{
-					//this.tabButtons['images'].stopTip(_('Shown'));
+					this.tabButtons['images'].stopTip(_('Shown'));
 					this.imageFields[index].hidden = 0;
 					
 					iF.iconHidden.hide();
@@ -746,8 +746,8 @@ var fancygallery_fancygallery = new Class({
 					iF.btnShow.hide();
 					iF.oImg.removeClass('image-hidden');
 				}
-				//else
-					//this.tabButtons['images'].stopTip(_('Failed'));
+				else
+					this.tabButtons['images'].stopTip(_('Failed'));
 				
 			}.bind(this)
 		}).post({
@@ -758,7 +758,7 @@ var fancygallery_fancygallery = new Class({
 	
 	hideImage: function(event, index)
 	{
-		//this.tabButtons['images'].startTip(_('Hiding image ...'));
+		this.tabButtons['images'].startTip(_('Hiding image ...'));
 		var iF = this.imageFields[index];
 		
 		new Request.JSON({
@@ -769,7 +769,7 @@ var fancygallery_fancygallery = new Class({
 			{
 				if(res)
 				{
-					//this.tabButtons['images'].stopTip(_('Hidden'));
+					this.tabButtons['images'].stopTip(_('Hidden'));
 					this.imageFields[index].hidden = 1;
 					
 					iF.iconHidden.show();
@@ -777,8 +777,8 @@ var fancygallery_fancygallery = new Class({
 					iF.btnShow.show();
 					iF.oImg.addClass('image-hidden');
 				}
-				//else
-					//this.tabButtons['images'].stopTip(_('Failed'));
+				else
+					this.tabButtons['images'].stopTip(_('Failed'));
 				
 			}.bind(this)
 		}).post({
@@ -789,7 +789,7 @@ var fancygallery_fancygallery = new Class({
 	
 	deleteImage: function(event, index)
 	{
-		//this.tabButtons['images'].startTip(_('Deleting image ...'));
+		this.tabButtons['images'].startTip(_('Deleting image ...'));
 		
 		new Request.JSON({
 			url: this.pGlobal+'delete/image',
@@ -799,13 +799,13 @@ var fancygallery_fancygallery = new Class({
 			{
 				if(res)
 				{
-					//this.tabButtons['images'].stopTip(_('Deleted'));
+					this.tabButtons['images'].stopTip(_('Deleted'));
 					
 					// Reload image list
 					this.loadAlbumImages();
 				}
-				//else
-					//this.tabButtons['images'].stopTip(_('Failed'));
+				else
+					this.tabButtons['images'].stopTip(_('Failed'));
 			}.bind(this)
 		}).post({
 			rsn: this.imageFields[index].rsn
@@ -936,7 +936,7 @@ var fancygallery_fancygallery = new Class({
 	
 	saveAlbumGeneral: function()
 	{
-		//this.tabButtons['general'].startTip(_('Saving ...'));
+		this.tabButtons['general'].startTip(_('Saving ...'));
 		
 		// Save general options
 		new Request.JSON({
@@ -948,7 +948,7 @@ var fancygallery_fancygallery = new Class({
 				if(res)
 				{
 					// Remove tooltips
-					//this.tabButtons['general'].stopTip(_('Saved'));
+					this.tabButtons['general'].stopTip(_('Saved'));
 					this.albumGeneralSaved = true;
 					this.saveAlbumSuccess();
 					
@@ -961,7 +961,7 @@ var fancygallery_fancygallery = new Class({
 				else
 				{
 					// Remove tooltips
-					//this.tabButtons['general'].stopTip(_('Failed'));
+					this.tabButtons['general'].stopTip(_('Failed'));
 					this.btnSave.stopTip(_('Failed'));
 				}
 			}.bind(this)
@@ -978,7 +978,7 @@ var fancygallery_fancygallery = new Class({
 	
 	saveAlbumImagesInfo: function()
 	{
-		//this.tabButtons['images'].startTip(_('Saving ...'));
+		this.tabButtons['images'].startTip(_('Saving ...'));
 		
 		// Save images
 		var imgs = {};
@@ -1003,14 +1003,14 @@ var fancygallery_fancygallery = new Class({
 				if(res)
 				{
 					// Remove tooltips
-					//this.tabButtons['images'].stopTip(_('Saved'));
+					this.tabButtons['images'].stopTip(_('Saved'));
 					this.albumImagesInfoSaved = true;
 					this.saveAlbumSuccess();
 				}
 				else
 				{
 					// Remove tooltips
-					//this.tabButtons['images'].stopTip(_('Failed'));
+					this.tabButtons['images'].stopTip(_('Failed'));
 					this.btnSave.stopTip(_('Failed'));
 				}
 			}.bind(this)
@@ -1021,7 +1021,7 @@ var fancygallery_fancygallery = new Class({
 	
 	saveAlbumImagesOrder: function()
 	{
-		//this.tabButtons['order'].startTip(_('Saving ...'));
+		this.tabButtons['order'].startTip(_('Saving ...'));
 		
 		var oImgs = {};
 		
@@ -1046,14 +1046,15 @@ var fancygallery_fancygallery = new Class({
 			onComplete: function(res) {
 				if(res)
 				{
-					//this.tabButtons['order'].stopTip(_('Saved'));
+					// Remove tooltips
+					this.tabButtons['order'].stopTip(_('Saved'));
 					this.albumImagesOrderSaved = true;
 					this.saveAlbumSuccess();
 				}
 				else
 				{
 					// Remove tooltips
-					//this.tabButtons['order'].stopTip(_('Failed'));
+					this.tabButtons['order'].stopTip(_('Failed'));
 					this.btnSave.stopTip(_('Failed'));
 				}
 			}.bind(this)
