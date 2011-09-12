@@ -180,12 +180,13 @@ class fancygallery extends baseModule
 		
 		tAssign('pConf', $pConf);
 		
+		kryn::addJs("kryn/mootools-core.js");
+        kryn::addJs("kryn/mootools-more.js");
+        kryn::addJs("fancygallery/js/humantimes.js");
+        kryn::addCss("fancygallery/css/detailalbum/slideshow/default.css");
 		kryn::addCss("fancygallery/css/viewalbums/$template.css");
 		kryn::addCss("fancygallery/css/viewalbums/$display/$template.css");
 		kryn::addJs("fancygallery/js/viewalbums/$display/$template.js");
-		kryn::addJs("kryn/mootools-core.js");
-		kryn::addJs("kryn/mootools-more.js");
-		kryn::addJs("fancygallery/js/humantimes.js");
 		return tFetch("fancygallery/viewalbums/$display/$template.tpl");
 	}
 	
@@ -224,47 +225,47 @@ class fancygallery extends baseModule
 		}
 	}
 	
-	public static function slideAlbum( $pConf )
+	public static function detailAlbum( $pConf )
 	{
-		$template = $pConf['template'];
-		
-		$albumRsn = getArgv('e1')+0;
-		
-		$sql = "
-			SELECT a.*, c.title AS categoryTitle
-			FROM %pfx%fancygallery_album a, %pfx%fancygallery_category c
-			WHERE 
-				    a.rsn = $albumRsn
-				AND a.hidden = 0
-				AND c.rsn = a.category
-		";
-		$album = dbExfetch($sql, 1);
-		tAssign('album', $album);
-		
-		$sql = "
-			SELECT i.*
-			FROM %pfx%fancygallery_image i
-			WHERE
-				    i.album = $albumRsn
-				AND i.hidden = 0
-			ORDER BY i.order_
-		";
-		$images = dbExfetch($sql, -1);
-		
-		tAssign('images', $images);
-		
-		// Check if width and height are set, if not, use defaults (700x700)
-		if($pConf["width"]+0 == 0)
-			$pConf["width"] = 700;
-		if($pConf["height"]+0 == 0)
-			$pConf["height"] = 700;
-		
-		//tAssign('debug', print_r($images, true));
-		
-		tAssign('pConf', $pConf);
-		kryn::addCss("fancygallery/css/detailalbum/$template.css");
-		kryn::addJs("fancygallery/js/detailalbum/$template.js");
-		return tFetch("fancygallery/detailalbum/$template.tpl");
+	    // Get settings from conf
+        $display = $pConf['display'];
+        $template = $pConf['template_'.$display];
+        
+        // Get images
+        $albumRsn = getArgv('e1')+0;
+        
+        $sql = "
+            SELECT a.*, c.title AS categoryTitle
+            FROM %pfx%fancygallery_album a, %pfx%fancygallery_category c
+            WHERE 
+                    a.rsn = $albumRsn
+                AND a.hidden = 0
+                AND c.rsn = a.category
+        ";
+        $album = dbExfetch($sql, 1);
+        tAssign('album', $album);
+        
+        $sql = "
+            SELECT i.*
+            FROM %pfx%fancygallery_image i
+            WHERE
+                    i.album = $albumRsn
+                AND i.hidden = 0
+            ORDER BY i.order_
+        ";
+        $images = dbExfetch($sql, -1);
+        
+        tAssign('images', $images);
+        
+        // Check if width and height are set, if not, use defaults (700x700)
+        if($pConf["width"]+0 == 0)
+            $pConf["width"] = 700;
+        if($pConf["height"]+0 == 0)
+            $pConf["height"] = 700;
+        
+        tAssign('rsn', $albumRsn);
+        tAssign('pConf', $pConf);
+        return tFetch("fancygallery/detailalbum/$display/$template.tpl");
 	}
 	
 	function humanTimeDiff($date)

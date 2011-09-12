@@ -10,7 +10,7 @@ Copyright:
 	
 Dependencies:
 	Slideshow.
-	Mootools 1.2 More: Fx.Elements.
+	Mootools 1.3.1 More: Fx.Elements.
 */
 
 Slideshow.Push = new Class({
@@ -30,6 +30,7 @@ Syntax:
 */
 	
 	initialize: function(el, data, options){
+		options = options || {};
 		options.overlap = true;		
 		this.parent(el, data, options);
 	},
