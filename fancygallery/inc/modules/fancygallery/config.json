@@ -1,0 +1,412 @@
+{
+  "version": "0.0.4",
+  "owner": "93",
+  "community": "1",
+  "category": "2",
+  "title": {
+    "en": "Fancy Gallery"
+  },
+  "desc": {
+    "en": "Fancy Gallery is a highly customizable gallery. Initial version will be a basic gallery, later on more customizable content will be added."
+  },
+  "tags": {
+    "en": "gallery,images,albums,customizable"
+  },
+  "writableFiles": "inc\/template\/fancygallery\/*",
+  "db": {
+    "fancygallery_category": {
+      "rsn": [
+        "int",
+        "",
+        "DB_PRIMARY",
+        true
+      ],
+      "title": [
+        "varchar",
+        "255",
+        "-",
+        false
+      ],
+      "creator": [
+        "int",
+        "",
+        "-",
+        false
+      ],
+      "created": [
+        "int",
+        "",
+        "-",
+        false
+      ],
+      "modifier": [
+        "int",
+        "",
+        "-",
+        false
+      ],
+      "modified": [
+        "int",
+        "",
+        "-",
+        false
+      ]
+    },
+    "fancygallery_album": {
+      "rsn": [
+        "int",
+        "",
+        "DB_PRIMARY",
+        true
+      ],
+      "category": [
+        "int",
+        "",
+        "-",
+        false
+      ],
+      "title": [
+        "varchar",
+        "255",
+        "-",
+        false
+      ],
+      "description": [
+        "text",
+        "",
+        "-",
+        false
+      ],
+      "hidden": [
+        "int",
+        "",
+        "-",
+        false
+      ],
+      "show_": [
+        "int",
+        "",
+        "-",
+        false
+      ],
+      "hide_": [
+        "int",
+        "",
+        "-",
+        false
+      ],
+      "hash": [
+        "text",
+        "",
+        "-",
+        false
+      ],
+      "creator": [
+        "int",
+        "",
+        "-",
+        false
+      ],
+      "created": [
+        "int",
+        "",
+        "-",
+        false
+      ],
+      "modifier": [
+        "int",
+        "",
+        "-",
+        false
+      ],
+      "modified": [
+        "int",
+        "",
+        "-",
+        false
+      ]
+    },
+    "fancygallery_image": {
+      "rsn": [
+        "int",
+        "",
+        "DB_PRIMARY",
+        true
+      ],
+      "album": [
+        "int",
+        "",
+        "-",
+        false
+      ],
+      "hash": [
+        "text",
+        "",
+        "-",
+        false
+      ],
+      "title": [
+        "text",
+        "",
+        "-",
+        false
+      ],
+      "description": [
+        "text",
+        "",
+        "-",
+        false
+      ],
+      "order_": [
+        "int",
+        "",
+        "-",
+        false
+      ],
+      "hidden": [
+        "int",
+        "",
+        "-",
+        false
+      ],
+      "creator": [
+        "int",
+        "",
+        "-",
+        false
+      ],
+      "created": [
+        "int",
+        "",
+        "-",
+        false
+      ],
+      "modifier": [
+        "int",
+        "",
+        "-",
+        false
+      ],
+      "modified": [
+        "int",
+        "",
+        "-",
+        false
+      ]
+    }
+  },
+  "admin": {
+    "fancygallery": {
+      "title": "Fancy Gallery",
+      "type": "custom",
+      "class": "fancyGalleryGlobal",
+      "isLink": true,
+      "multi": false,
+      "minWidth": 850,
+      "minHeight": 500,
+      "childs": {
+        "categories": {
+          "title": "Categories",
+          "type": "list",
+          "class": "fancyGalleryCategoryList",
+          "isLink": true,
+          "multi": false,
+          "childs": {
+            "add": {
+              "title": "Add new gallery",
+              "type": "add",
+              "class": "fancyGalleryCategoryAdd",
+              "isLink": false,
+              "multi": false,
+              "childs": [
+                
+              ]
+            },
+            "edit": {
+              "title": "Edit gallery",
+              "type": "edit",
+              "class": "fancyGalleryCategoryEdit",
+              "isLink": false,
+              "multi": false,
+              "childs": [
+                
+              ]
+            }
+          }
+        }
+      }
+    }
+  },
+  "plugins" : {
+    "viewAlbums" : [
+      "View Albums",
+      {
+        "perPage" : {
+          "label"	: "Albums per page",
+          "type"	: "integer",
+          "length"	: "6",
+          "default"	: "5",
+          "empty"	: false
+        },
+        "maxPages" : {
+          "label"	: "Max pages",
+          "type"	: "integer",
+          "length"	: "6",
+          "default"	: "0"
+        },
+        "detailPage" : {
+          "label"	: "Detail page",
+          "type"	: "page",
+          "empty"	: false
+        },
+        "display" : {
+          "label"	: "Display style",
+          "type"	: "select",
+          "multi"	: false,
+          "tableItems" : [
+          	{
+          	  "name"	: "",
+          	  "nameKey"	: ""
+          	},
+          	{
+          	  "name"	: "Thumbnail",
+          	  "nameKey"	: "thumb"
+          	},
+            {
+              "name"	: "Thumbnails",
+              "nameKey"	: "thumbs"
+            },
+            {
+              "name"	: "Infinite effects",
+              "nameKey"	: "infinite"
+            },
+            {
+              "name"	: "Panning and zooming",
+              "nameKey"	: "panningzooming"
+            }
+          ],
+          "table_label"	: "name",
+          "table_id"	: "nameKey",
+          "depends"		: {
+            "template_thumb" : {
+              "needValue": "thumb",
+              "label"    : "Template",
+              "type"     : "files",
+              "withoutExtension" : true,
+              "directory": "inc\/template\/fancygallery\/viewalbums\/thumb\/",
+              "empty"    : false
+            },
+            "template_thumbs" : {
+              "needValue": "thumbs",
+              "label"    : "Template",
+              "type"     : "files",
+              "withoutExtension" : true,
+              "directory": "inc\/template\/fancygallery\/viewalbums\/thumbs\/",
+              "empty"    : false 
+            },
+            "template_infinite" : {
+              "needValue": "infinite",
+              "label"    : "Template",
+              "type"     : "files",
+              "withoutExtension" : true,
+              "directory": "inc\/template\/fancygallery\/viewalbums\/infinite\/",
+              "empty"    : false 
+            },
+            "template_panningzooming" : {
+              "needValue": "panningzooming",
+              "label"    : "Template",
+              "type"     : "files",
+              "withoutExtension" : true,
+              "directory": "inc\/template\/fancygallery\/viewalbums\/panningzooming\/",
+              "empty"    : false 
+            },
+            "thumbCount" : {
+              "needValue"	: "thumbs",
+              "label"		: "Amount of thumbnails",
+              "type"		: "integer",
+              "length"		: "6",
+              "default"		: "10"
+            },
+            "imageCount" : {
+              "needValue"	: "image",
+              "label"		: "Amount of images",
+              "type"		: "integer",
+              "length"		: "6",
+              "default"		: "5"
+            }
+          }
+        },
+        "categories" : {
+          "label"	: "Category\/s",
+          "type"	: "select",
+          "multi"	: true,
+          "table"	: "fancygallery_category",
+          "table_label" : "title",
+          "table_id" : "rsn",
+          "empty"	: false
+        }
+      }
+    ],
+    "slideAlbum" : [
+      "Album slideshow",
+      {
+        "captions" : {
+          "label"	: "Show captions",
+          "type"	: "checkbox"
+        },
+        "center" : {
+          "label"	: "Center images",
+          "type"	: "checkbox",
+          "value"	: 1
+        },
+        "controller" : {
+          "label"	: "Show controller",
+          "type"	: "checkbox"
+        },
+        "thumbnails" : {
+          "label"	: "Show thumbnails",
+          "type"	: "checkbox"
+        },
+        "loop" : {
+          "label"	: "Loop images",
+          "type"	: "checkbox",
+          "value"	: 1
+        },
+        "preload" : {
+          "label"	: "Preload images",
+          "desc"	: "Preloading loads all images at start rather than streaming image by image",
+          "type"	: "checkbox"
+        },
+        "width" : {
+          "label"	: "Width",
+          "desc"	: "Width value for the show as a whole integer, if a width value is not given the width of the album will be used.",
+          "type"	: "int"
+        },
+        "height" : {
+          "label"	: "Height",
+          "desc"	: "Height value for the show as a whole integer, if a height value is not given the height of the album will be used.",
+          "type"	: "int"
+        },
+        "delay" : {
+          "label"	: "Delay between slides",
+          "desc"	: "The delay between slide changes in milliseconds (1000 = 1 second)",
+          "type"	: "int",
+          "value"	: 2000
+        },
+        "duration" : {
+          "label"	: "Effect duration",
+          "desc"	: "The duration of the effect in milliseconds (1000 = 1 second)",
+          "type"	: "int",
+          "value"	: 750
+        },
+        "template" : {
+          "label"	: "Template",
+          "type"	: "files",
+          "withoutExtension" : true,
+          "directory" : "inc\/template\/fancygallery\/detailalbum\/",
+          "empty"	: false
+        }
+      }
+    ]
+  }
+}

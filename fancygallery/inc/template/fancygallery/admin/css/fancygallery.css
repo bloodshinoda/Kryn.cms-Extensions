@@ -1,0 +1,138 @@
+
+.fg-list
+{
+	position: absolute;
+	left: 2px;
+	top: 24px;
+	bottom: 0px;
+	width: 200px;
+	border-top: 1px solid #ddd;
+	border-left: 1px solid #ddd;
+	border-bottom: 1px solid #ddd;
+}
+
+input.fg-search 
+{
+	position: absolute;
+	top: 24px;
+	left: 2px;
+	width: 197px;
+	padding: 1px;
+	border: 1px solid #ddd;
+	height: 16px;
+	color: silver;
+}
+
+.fg-contentPane
+{
+	position: absolute;
+	left: 205px;
+	top: 0px;
+	right: 0px;
+	bottom: 0px;
+	border-left: 1px solid #ccc;
+}
+
+.fg-infoPanel
+{
+	position: absolute;
+	background-color: #eee;
+	top: 0px;
+	padding-top: 10px;
+	width: 150px;
+	right: 0px;
+	bottom: 0px;
+	border-left: 1px solid #ddd;
+}
+
+.fg-panel
+{
+	position: absolute;
+	background-color: #eee;
+	top: 0px;
+	padding-top: 10px;
+	left: 0px;
+	right: 151px;
+	bottom: 0px;
+	display: none;
+	overflow: auto;
+}
+
+.multiUpload-firstInput
+{
+	right: 100px;
+}
+
+.image-container
+{
+	position: absolute;
+	left: 5px;
+	top: 75px;
+	right: 10px;
+}
+
+.image-block
+{
+	position: relative; 
+	clear: both;
+}
+
+.image-block .image-holder
+{
+	float: left; 
+	width: 155px;
+}
+
+.image-block .image-fields
+{
+	float: left;
+	padding-bottom: 2em;
+}
+
+.image-block .image-thumb
+{
+	border: 1px solid #000;
+}
+
+.image-block .image-button
+{
+	border: 1px solid #ccc; 
+	padding: 1px; 
+	cursor: pointer;
+}
+
+.image-block .image-button:hover
+{
+	border: 1px solid #33d;
+}
+
+.image-block .ka-field-title .title,
+.image-block .ka-field-field input,
+.image-block .ka-field-field textarea,
+.image-block .ka-field-field select
+{
+	width: 265px;
+}
+
+#sortable-images
+{
+	padding: 5px auto;
+}
+
+#sortable-images img
+{
+	float: left;
+	border: 1px solid #ccc;
+	padding: 1px;
+	cursor: pointer;
+}
+
+#sortable-images img:hover
+{
+	border: 1px solid #33d;
+}
+
+#sortable-images .image-hidden
+{
+	border: 1px solid #d33;
+}

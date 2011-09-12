@@ -1,0 +1,7 @@
+.fancygallery img { float: left; padding: 0; margin: 0; }
+.fancygallery p { padding: 5px 5px; margin: 0; }
+.fancygallery .album { width: 45%; float: left; margin: 10px; padding: 5px; background: #EEE; }
+.fancygallery .clr { clear:both; padding:0; margin:0;}
+
+.fancygallery .album-title { font-weight: bold; }
+.fancygallery .album-modified { font-size: 0.8em; color: gray; }
