@@ -1,0 +1,57 @@
+<h2>How to use this extension:</h2>
+<ol>
+<li>Get a ReCAPTCHA key <a title="Create ReCAPTCHA key" href="https://www.google.com/recaptcha/admin/create" target="_blank">here</a></li>
+<li>In the template where you want to use ReCAPTCHA add<br />&nbsp; &nbsp; {captcha publickey="&lt;public-key&gt;"}<br /> in the form</li>
+<li>In the controller that needs to check add<br />&nbsp; &nbsp; $r = captcha::checkCaptcha(&lt;private-key&gt;);</li>
+<li>If $r-&gt;isValid is true, the ReCAPTCHA was answered correctly, else the error is provided in $r-&gt;error</li>
+</ol>
+<h2>Errors</h2>
+<ul>
+<li><strong>invalid-site-private-key</strong><br />Invalid private key used for this site, check if the key is for the domain it is used on.<br /><strong>Possible solution:</strong>
+<ul>
+<li>Did you swap the public and private key?</li>
+<li>Did you make sure to copy the entire key, with all hyphens and underscores but without any spaces? The key should be exactly 40 characters long.</li>
+</ul>
+</li>
+<li><strong>invalid-request-cookie</strong><br />The challenge parameter of the verify script was incorrect&nbsp;</li>
+<li><strong>incorrect-captcha-sol</strong><br />The ReCAPTCHA solution was incorrect</li>
+<li><strong>recaptcha-not-reachable</strong><br />The ReCAPTCHA verification server was not reachable&nbsp;</li>
+</ul>
+<h2>Themes</h2>
+<p>A few themes are supported by this extension. They can be set by adding the "theme" parameter to the {captcha} call.</p>
+<p>An example looks as follows:</p>
+<p style="padding-left: 10px;">{captcha publickey="&lt;publickey&gt;" theme="white"}</p>
+<p>Possible themes are: red, white, blackglass or clean. See <a href="http://code.google.com/intl/en-EN/apis/recaptcha/docs/customization.html" target="_blank">customizing</a> for theme examples.</p>
+<h2>Languages</h2>
+<p>Like themes, different languages can be used for ReCAPTCHA. When no language has been set the extension will look which language is set for the page and if it's a known language it will use that language.</p>
+<p>You can force the language by adding the "lang" parameter to the {captcha} call.</p>
+<p>An example looks as follows:</p>
+<p style="padding-left: 10px;">{captcha publickey="&lt;public-key&gt;" lang="de"}</p>
+<p>Possible languages are: en, nl, fr, de, pt, ru, es, tr.</p>
+<h2>Private and public key</h2>
+<p>The keys can be set hard-coded in the template and controller, but it is better to use the page config to handle these values.</p>
+<p>An example for plugin config is:</p>
+<p style="padding-left: 10px;">"plugins": {</p>
+<p style="padding-left: 20px;">"form": [</p>
+<p style="padding-left: 30px;">"Form",</p>
+<p style="padding-left: 30px;">{</p>
+<p style="padding-left: 40px;">"useCaptcha": {</p>
+<p style="padding-left: 50px;">"label": "Use captcha?",</p>
+<p style="padding-left: 50px;">"type": "checkbox",</p>
+<p style="padding-left: 50px;">"depends": {</p>
+<p style="padding-left: 60px;">"pubkey": {</p>
+<p style="padding-left: 70px;">"needValue": 1,</p>
+<p style="padding-left: 70px;">"label": "Public key",</p>
+<p style="padding-left: 70px;">"type": "text"</p>
+<p style="padding-left: 60px;">},</p>
+<p style="padding-left: 60px;">"privkey": {</p>
+<p style="padding-left: 70px;">"needValue": 1,</p>
+<p style="padding-left: 70px;">"label": "Private key",</p>
+<p style="padding-left: 70px;">"type": "text"</p>
+<p style="padding-left: 60px;">}</p>
+<p style="padding-left: 50px;">}</p>
+<p style="padding-left: 40px;">}</p>
+<p style="padding-left: 30px;">}</p>
+<p style="padding-left: 20px;">]</p>
+<p style="padding-left: 10px;">}</p>
+<p>As you can see, the keys are provided in the plugin config now instead of hardcoded in the template and controller. This makes your extension more flexible and easier to use.</p>

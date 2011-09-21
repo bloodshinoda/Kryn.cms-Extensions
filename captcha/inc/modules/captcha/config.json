@@ -1,0 +1,26 @@
+{
+  "version": "0.1.0",
+  "owner": "93",
+  "community": "1",
+  "category": "8",
+  "title": {
+    "en": "Captcha"
+  },
+  "desc": {
+    "en": "Captcha extension to be used by other extensions"
+  },
+  "tags": {
+    "en": "captcha"
+  },
+  "writableFiles": "",
+  "admin": {
+    
+  },
+  "plugins": [
+    
+  ],
+  "db": {
+    
+  },
+  "depends": ""
+}
