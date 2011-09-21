@@ -1,5 +1,5 @@
 {
-  "version": "0.0.1",
+  "version": "0.0.2",
   "owner": "93",
   "community": "1",
   "category": "8",
@@ -7,54 +7,20 @@
     "en": "Captcha"
   },
   "desc": {
-    "en": "Captcha extension that can by used by other extensions"
+    "en": "Captcha extension to be used by other extensions"
   },
   "tags": {
     "en": "captcha"
   },
-  "writableFiles": "inc\/captcha\/template\/*",
+  "writableFiles": "",
   "admin": {
-    "captcha": {
-      "title": "Captcha",
-      "type": "list",
-      "class": "captchaList",
-      "isLink": true,
-      "multi": false,
-      "childs": [
-        
-      ]
-    }
+    
   },
   "plugins": [
     
   ],
   "db": {
-    "captcha": {
-      "rsn": [
-        "varchar",
-        "32",
-        "DB_PRIMARY",
-        false
-      ],
-      "origin": [
-        "varchar",
-        "32",
-        "DB_PRIMARY",
-        false
-      ],
-      "code_": [
-        "varchar",
-        "6",
-        "-",
-        false
-      ],
-      "created": [
-        "int",
-        "",
-        "-",
-        false
-      ]
-    }
+    
   },
   "depends": ""
 }

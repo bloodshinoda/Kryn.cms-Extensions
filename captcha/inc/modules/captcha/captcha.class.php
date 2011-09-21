@@ -1,192 +1,143 @@
 <?php
+/*
+ * This is a PHP library that handles calling reCAPTCHA.
+ *    - Documentation and latest version
+ *          http://recaptcha.net/plugins/php/
+ *    - Get a reCAPTCHA API Key
+ *          https://www.google.com/recaptcha/admin/create
+ *    - Discussion group
+ *          http://groups.google.com/group/recaptcha
+ *
+ * Copyright (c) 2007 reCAPTCHA -- http://recaptcha.net
+ * AUTHORS:
+ *   Mike Crawford
+ *   Ben Maurer
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+class CaptchaResponse
+{
+    var $isValid;
+    var $error;
+    
+    public function __construct($isValid, $error=null)
+    {
+        $this->isValid = $isValid;
+        $this->error = $error;
+    }
+}
 
 class captcha extends baseModule
 {
-	/**
-	 * Create image with code from origin-key combination 
-	 * @param string $origin Origin of request (preferably extention key)
-	 * @param string $key Key to lookup
-	 * @return <strong>image/gif</strong> Image containing the key, empty image when the origin-key combination has no code.
-	 */
-	public static function showCaptcha($origin, $key)
-	{
-		@ob_end_clean();
-		
-		$fontsPath = dirname(__FILE__) . '/fonts/';
-		
-		$fonts = array(
-			'anonymous.gdf',
-			'automatic.gdf',
-			'borringlesson.gdf'
-		);
-		
-		$randomCharacters = 0;
-		$textColors = array(
-		        array(255,   0,   0),
-		        array(  0,   0, 255)
-		);
-		
-		$backgroundTextColors = array(
-	        	array(131, 131, 131),
-	        	array(166, 166, 166),
-	        	array(192, 192, 192),
-	        	array(217, 217, 217),
-		        array(237, 237, 237)
-		);
-		
-		$backgroundColor = array(0xff, 0x00, 0xff);
-		
-		// Config end
-		
-		$fontNums = array();
-		$maxWidth = 0;
-		$maxHeight = 0;
-		
-		foreach($fonts as $font)
-		{
-			$fontNums[] = $loadedFont = imageloadfont($fontsPath.$font);
-			$width = imagefontwidth($loadedFont);
-			$height = imagefontheight($loadedFont);
-
-			if($width > $maxWidth)
-				$maxWidth = $width;
-			if($height > $maxHeight)
-				$maxHeight = $height;
-		}
-		
-		$key = getArgv('e1', 1);
-		$code = self::getValue($origin, $key);
-		
-		if($code == null || $code == "")
-			exit();
-		
-		header('Content-Type: image/gif');
-		
-		$imgWidth = $maxWidth * strlen($code) + 20;
-		$imgHeight = $maxHeight * 2;
-		$img = imagecreatetruecolor($imgWidth, $imgHeight);
-		$bgColor = imagecolorallocate($img, $backgroundColor[0], $backgroundColor[1], $backgroundColor[2]);
-		imagefilledrectangle($img, 0, 0, $imgWidth, $imgHeight, $bgColor);
-		imagecolortransparent($img, $bgColor);
-		
-		$colors = array();
-		foreach($backgroundTextColors as $backgroundTextColor)
-		        $colors[] = imagecolorallocate($img, $backgroundTextColor[0], $backgroundTextColor[1], $backgroundTextColor[2]);
-		
-		$textColor = $textColors[rand(0, count($textColors)-1)];
-		$textColor = imagecolorallocate($img, $textColor[0], $textColor[1], $textColor[2]);
-		
-		$maxFont = count($fonts) - 1;
-		$maxColor = count($colors) -1;
-		$maxRandWidth = $imgWidth - $maxWidth;
-		$maxTextHeight = $maxHeight - 5;
-		$textLength = strlen($code);
-		$aOrd = ord('A');
-		
-		// Random characters
-		if(!$randomCharacters)
-			$randomCharacters = $textLength * 3;
-		for($i=0; $i<$randomCharacters; $i++)
-			imagechar($img, $fontNums[rand(0, $maxFont)], rand(0, $maxRandWidth), rand(0, $maxHeight), chr(rand(0, 25) + $aOrd), $colors[rand(0, $maxColor)]);
-		
-		// Text
-		for($i=0; $i<$textLength; $i++)
-			imagechar($img, $fontNums[rand(0, $maxFont)], 10 + ($i * $maxWidth), rand(5, $maxTextHeight), $code{$i}, $textColor);
-		
-		imagegif($img);
-		imagedestroy($img);
-		
-		exit();
-	}
-	
-	/**
-	 * Create a new captcha code
-	 * @param string $origin Origin of request (preferably extention key)
-	 * @param string $length Length of the code to generate, default 6
-	 * @return <strong>array</strong> Array containing key and code as follows:
-	 * <table style="margin-left: 20px;">
-	 * <tr><td><strong>key</strong></td><td>Key of the captcha entry</td></tr>
-	 * <tr><td><strong>code</strong></td><td>Code of the captcha entry</td></tr>
-	 * </table>
-	 */
-	public static function createCaptcha($origin, $length = 6)
-	{
-		// Key generation
-		$key = null;
-		do
-		{ $key = md5(rand());
-		} while(self::getValue($origin, $key) !== null);
-		
-		// Value generation
-		$aOrd = ord('A');
-		$text = '';
-		for($i=0; $i<$length; $i++)
-			$text .= chr(rand(0, 25) + $aOrd);
-		
-		// Current timestamp
-		$now = time();
-		
-		// Insert into database
-		dbInsert(
-			'captcha',
-			array(
-				'rsn' => $key,
-				'origin' => $origin,
-				'code_' => $text,
-				'created' => $now
-			)
-		);
-		
-		// Return array with key and value
-		return array(
-			'key' => $key,
-			'code' => $text
-		);
-	}
-	
-	/**
-	 * Check if the given value matches the code belonging to the origin-key combination
-	 * @param string $origin Origin of request (preferably extention key)
-	 * @param string $key Key to lookup
-	 * @param string $value Value to be tested
-	 * @return <strong>boolean</strong> True if the value matches
-	 */
-	public static function checkCaptcha($origin, $key, $value)
-	{
-		// Retrieve code
-		$code = self::getValue($origin, $key);
-		
-		// When code is null return false, else check if code and value are similar
-		return $code === null ? false : strtoupper($value) == $code;
-	}
-	
-	/**
-	 * Get the value of a captcha origin-key combination
-	 * @param string $origin Origin of request (preferably extention key)
-	 * @param string $key Key to lookup
-	 * @return <strong>string</strong> Value of the captcha or null when the origin-key combination is not found 
-	 */
-	private static function getValue($origin, $key)
-	{
-		$query = "
-			SELECT code_
-			FROM %pfx%captcha
-			WHERE origin='$origin' AND rsn='$key'
-		";
-		$sql = dbExfetch($query, 1);
-		
-		// Return null on no sql result
-		return $sql === false ? null : $sql['code_']; 
-	}
-	
-	/**
-	 * Prune all captchas older than one day. 
-	 */
-	public static function pruneCaptcha()
-	{
-		// All captchas older than 24 hours can be deleted
-		dbDelete('captcha', 'created < '.(time() - 86400));
-	}
+    /**
+     * The reCAPTCHA server URL's
+     */
+    private static $RECAPTCHA_API_SERVER = "http://www.google.com/recaptcha/api";
+    private static $RECAPTCHA_API_SECURE_SERVER = "https://www.google.com/recaptcha/api";
+    private static $RECAPTCHA_VERIFY_SERVER = "www.google.com";
+    
+    /**
+     * Encodes the given data into a query string format
+     * @param array $data array of string elements to be encoded
+     * @return string encoded request
+     */
+    private static function _qsencode($data)
+    {
+        $req = '';
+        foreach($data as $key=>$value)
+           $req .= $key.'='.urlencode(stripslashes($value)).'&';
+           
+        // Cut last &
+        return substr($req, 0, strlen($req)-1);
+    }
+    
+    /**
+     * Submits an HTTP POST to a reCAPTCHA server
+     * @param array $data
+     * @return array response
+     */
+    private static function _httpPost($data)
+    {
+        $host = self::$RECAPTCHA_VERIFY_SERVER;
+	    $port = 80;
+	    $path = '/recaptcha/api/verify';
+	    $req = self::_qsencode($data);
+	    
+	    $http_request  = "POST $path HTTP/1.0\r\n";
+        $http_request .= "Host: $host\r\n";
+        $http_request .= "Content-Type: application/x-www-form-urlencoded;\r\n";
+        $http_request .= "Content-Length: " . strlen($req) . "\r\n";
+        $http_request .= "User-Agent: reCAPTCHA/PHP\r\n";
+        $http_request .= "\r\n";
+        $http_request .= $req;
+        
+        if(false == ($fs = @fsockopen($host, $port, $errno, $errstr, 10)))
+        {
+            kLog('captcha', 'Could not open socket to '.$host);
+            return null;
+        }
+	    
+        $response = '';
+        fwrite($fs, $http_request);
+        while(!feof($fs))
+            $response .= fgets($fs, 1160); // One TCP-IP packet
+        fclose($fs);
+        
+        $response = explode("\r\n\r\n", $response, 2);
+        
+        return $response;
+    }
+    
+    public static function checkCaptcha($privateKey)
+    {
+        $remoteip = $_SERVER['REMOTE_ADDR'];
+        $challenge = getArgv('recaptcha_challenge_field');
+        $response = getArgv('recaptcha_response_field');
+        
+        // Private key is required
+        if($privateKey == null || $privateKey == '')
+        {
+            kLog('captcha', 'To use Captcha you must get an API key from <a href=\'https://www.google.com/recaptcha/admin/create\'>https://www.google.com/recaptcha/admin/create</a>');
+            return new CaptchaResponse(false, 'invalid-site-private-key');
+        }
+        
+        // Discard spam submissions
+        if($challenge == null || strlen($challenge) == 0 || $response == null || strlen($response) == 0)
+            return new CaptchaResponse(false, 'incorrect-captcha-sol');
+        
+        $response = self::_httpPost(array(
+            'privatekey' => $privateKey,
+            'remoteip' => $remoteip,
+            'challenge' => $challenge,
+            'response' => $response
+        ));
+        
+        if($response == null)
+            return new CaptchaResponse(false, 'recaptcha-not-reachable');
+        
+        $answers = explode("\n", $response[1]);
+        if($answers[0] == 'true')
+            return new CaptchaResponse(true);
+        else
+            return new CaptchaResponse(false, $answers[1]);
+    }
 }
 
 ?>
