@@ -160,16 +160,16 @@ class fancygallery extends baseModule
 		switch($display)
 		{
 			case 'thumb':
-				self::addImages(&$list, 1);
+				self::addImages($list, 1);
 				break;
 				
 			case 'thumbs':
-				self::addImages(&$list, $thumbCount);
+				self::addImages($list, $thumbCount);
 				break;
 				
 			case 'infinite':
 			case 'panningzooming':
-				self::addImages(&$list);
+				self::addImages($list);
 				break;
 		}
 		
@@ -190,7 +190,7 @@ class fancygallery extends baseModule
 		return tFetch("fancygallery/viewalbums/$display/$template.tpl");
 	}
 	
-	private static function addImages($list, $amount=0)
+	private static function addImages(&$list, $amount=0)
 	{
 		foreach($list as $k=>$v)
 		{
