@@ -291,7 +291,7 @@ var fancygallery_fancygallery = new Class({
 		// Created by
 		this.tabFields['general']['created'] = new ka.field({
 			label: _('Created'),
-			type: 'info',
+			type: 'html',
 			desc: ' '
 		}).inject(panel);
 		this.tabFields['general']['created'].main
@@ -301,7 +301,7 @@ var fancygallery_fancygallery = new Class({
 		// Modified by
 		this.tabFields['general']['modified'] = new ka.field({
 			label: _('Last modified'),
-			type: 'info',
+			type: 'html',
 			desc: ' '
 		}).inject(panel);
 		this.tabFields['general']['modified'].main
@@ -324,8 +324,7 @@ var fancygallery_fancygallery = new Class({
 			uploadpath: 'admin/backend/window/sessionbasedFileUpload/',
 			fileNameConverter: 'fgFileNameConvert',
 			upload: '_uploadCallback',
-			win: this.win
-		}).inject(panel);
+		}, panel, {win: this.win});
 		this.tabFields['images']['upload'].main.getElement('div.ka-field-field').getElement('input').setStyle('width', '90%');
 		this.tabFields['images']['upload'].obj
 		.addEvent('success', function(pFile, pSecParam) { this._uploadCallback(pFile, pSecParam) }.bind(this));
@@ -481,7 +480,7 @@ var fancygallery_fancygallery = new Class({
 				{
 					// Update category list
 					// Empty current list
-					var slcCat = this.tabFields['general']['category'].main.getElement('select');
+					var slcCat = this.tabFields['general']['category'].select;
 					slcCat.empty();
 					
 					// Use values from this.listCategories
@@ -489,12 +488,9 @@ var fancygallery_fancygallery = new Class({
 						if(element.value == 0)
 							element.text = _('No category');
 						
-						new Element('option', {
-							text: element.text,
-							value: element.value,
-							selected: res.category == element.value
-						}).inject(slcCat);
+						slcCat.add(element.value, element.text);
 					});
+					slcCat.setValue(res.category, false);
 					
 					// Put data into fields
 					this.tabFields['general']['title'].setValue(res.title);
