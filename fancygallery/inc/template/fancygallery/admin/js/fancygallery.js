@@ -189,7 +189,7 @@ var fancygallery_fancygallery = new Class({
 			}).inject(this.mainContentPane);
 			
 			this.infoPanelHeader = new Element('div', {
-				style: 'position: absolute; left: 5px; top: 8px; right: 5px; font-weight: bold; font-size: 12px; color: #666; border-bottom: 1px solid #ddd;',
+				style: 'position: absolute; left: 5px; top: 8px; right: 5px; font-weight: bold; font-size: 12px; color: #666; border-bottom: 1px solid #ddd;'
 			}).inject(this.infoPanel);
 			
 			this.infoPanelBody = new Element('div', {
@@ -268,7 +268,7 @@ var fancygallery_fancygallery = new Class({
 		// Show from
 		this.tabFields['general']['show'] = new ka.field({
 			label: _('Show from ...'),
-			type: 'datetime',
+			type: 'datetime'
 		}).inject(panel);
 		this.tabFields['general']['show'].main
 		.addEvent('mouseover', this.setInfoFields.bindWithEvent(this, { h: _('Show from ...'), i: _('If you want to show this album from a certain date (and time), set the date (and time) here.') }))
@@ -318,11 +318,10 @@ var fancygallery_fancygallery = new Class({
 			savepath: '/fancygallery/tempUpload/',
 			uploadpath: 'admin/backend/window/sessionbasedFileUpload/',
 			fileNameConverter: 'fgFileNameConvert',
-			upload: '_uploadCallback',
+			upload: '_uploadCallback'
 		}, panel, {win: this.win});
 		this.tabFields['images']['upload'].main.getElement('div.ka-field-field').getElement('input').setStyle('width', '90%');
-		this.tabFields['images']['upload'].obj
-		.addEvent('success', function(pFile, pSecParam) { this._uploadCallback(pFile, pSecParam) }.bind(this));
+		this.tabFields['images']['upload'].obj.addEvent('success', function(pFile, pSecParam) { this._uploadCallback(pFile, pSecParam) }.bind(this));
 		
 		this.multiUploadFileContainer = this.tabFields['images']['upload'].main.getElement('div.multiUpload-fileContainer');
 		
@@ -658,7 +657,7 @@ var fancygallery_fancygallery = new Class({
 		
 		// Options fields
 		var imgFields = new Element('div', {
-			'class': 'image-fields',
+			'class': 'image-fields'
 		}).inject(imgCont);
 		
 		// Title
@@ -971,8 +970,7 @@ var fancygallery_fancygallery = new Class({
 		// Save images
 		var imgs = {};
 		
-		this.imageFields
-		.each(function(fields, index) {
+		this.imageFields.each(function(fields, index) {
 			var info = {};
 			
 			info.rsn = fields.rsn;
