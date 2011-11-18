@@ -934,8 +934,6 @@ var fancygallery_fancygallery = new Class({
 	
 	saveAlbumGeneral: function()
 	{
-		this.tabButtons['general'].startTip(_('Saving ...'));
-		
 		// Save general options
 		new Request.JSON({
 			url: this.pGlobal+'save/album',
@@ -945,8 +943,6 @@ var fancygallery_fancygallery = new Class({
 			{
 				if(res)
 				{
-					// Remove tooltips
-					this.tabButtons['general'].stopTip(_('Saved'));
 					this.albumGeneralSaved = true;
 					this.saveAlbumSuccess();
 					
@@ -958,7 +954,8 @@ var fancygallery_fancygallery = new Class({
 				}
 				else
 				{
-					// Remove tooltips
+					// Show failed tooltips
+					this.tabButtons['general'].startTip(_('Failed'));
 					this.tabButtons['general'].stopTip(_('Failed'));
 					this.btnSave.stopTip(_('Failed'));
 				}
@@ -976,8 +973,6 @@ var fancygallery_fancygallery = new Class({
 	
 	saveAlbumImagesInfo: function()
 	{
-		this.tabButtons['images'].startTip(_('Saving ...'));
-		
 		// Save images
 		var imgs = {};
 		
@@ -1000,14 +995,13 @@ var fancygallery_fancygallery = new Class({
 			onComplete: function(res) {
 				if(res)
 				{
-					// Remove tooltips
-					this.tabButtons['images'].stopTip(_('Saved'));
 					this.albumImagesInfoSaved = true;
 					this.saveAlbumSuccess();
 				}
 				else
 				{
-					// Remove tooltips
+					// Show failed tooltips
+					this.tabButtons['images'].startTip(_('Failed'));
 					this.tabButtons['images'].stopTip(_('Failed'));
 					this.btnSave.stopTip(_('Failed'));
 				}
@@ -1019,8 +1013,6 @@ var fancygallery_fancygallery = new Class({
 	
 	saveAlbumImagesOrder: function()
 	{
-		this.tabButtons['order'].startTip(_('Saving ...'));
-		
 		var oImgs = {};
 		
 		this.imageOrderContainer.getElements('img')
@@ -1044,14 +1036,13 @@ var fancygallery_fancygallery = new Class({
 			onComplete: function(res) {
 				if(res)
 				{
-					// Remove tooltips
-					this.tabButtons['order'].stopTip(_('Saved'));
 					this.albumImagesOrderSaved = true;
 					this.saveAlbumSuccess();
 				}
 				else
 				{
-					// Remove tooltips
+					// Show failed tooltips
+					this.tabButtons['order'].startTip(_('Failed'));
 					this.tabButtons['order'].stopTip(_('Failed'));
 					this.btnSave.stopTip(_('Failed'));
 				}
