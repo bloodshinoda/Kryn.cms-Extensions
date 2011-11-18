@@ -267,7 +267,8 @@ class fancyGalleryGlobal extends baseModule
 		
 		$sql = "
 			SELECT
-				a.title, a.description, a.category, a.hidden, a.show_, a.hide_, uc.username as 'creator', a.created, um.username as 'modifier', a.modified
+				a.title, a.description, a.category, a.hidden, a.show_, a.hide_, 
+				uc.username AS creator, a.created, um.username AS modifier, a.modified
 			FROM
 				%pfx%fancygallery_album a,
 				%pfx%system_user uc,
@@ -305,7 +306,7 @@ class fancyGalleryGlobal extends baseModule
 		
 		$sql = "
 			SELECT
-				um.username as 'modifier', a.modified
+				um.username as modifier, a.modified
 			FROM
 				%pfx%fancygallery_album a,
 				%pfx%system_user um
@@ -429,8 +430,8 @@ class fancyGalleryGlobal extends baseModule
 		// Image info
 		$sql = "
 			SELECT
-				fgi.hash as 'imageHash',
-				fga.hash as 'albumHash'
+				fgi.hash as imageHash,
+				fga.hash as albumHash
 			FROM
 				%pfx%fancygallery_image fgi,
 				%pfx%fancygallery_album fga
