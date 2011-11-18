@@ -2,15 +2,10 @@
  * @author Ferdi
  */
 
-var Log = function( pVal ){
-    logger(pVal);
-}
-
 var fgFileNameConvert = function(pFile, pSecParam)
 {
 	rName = pSecParam.substr((pSecParam.indexOf(_sid) + _sid.length + 2));
 	rName = rname.substr(0, rName.length - 1);
-	Log('rName: '+rName);
 	
 	return rName;
 };
@@ -1025,8 +1020,6 @@ var fancygallery_fancygallery = new Class({
 			
 			oImgs[index] = info;
 		}.bind(this));
-		
-		Log(oImgs);
 		
 		// Send request to save order
 		new Request.JSON({
