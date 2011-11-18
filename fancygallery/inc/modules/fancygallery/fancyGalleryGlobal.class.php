@@ -17,7 +17,7 @@ class fancyGalleryGlobal extends baseModule
 			FROM %pfx%fancygallery_category
 			WHERE title LIKE '$q'
 			ORDER BY title
-			LIMIT 0, 30
+			LIMIT 30 OFFSET 0
 		";
 		
 		json(dbExfetch($sql, -1));
@@ -37,7 +37,7 @@ class fancyGalleryGlobal extends baseModule
 					    category = '$c'
 					AND title LIKE '$q'
 				ORDER BY title
-				LIMIT 0, 30
+				LIMIT 30 OFFSET 0
 			";
 		else
 			$sql = "
@@ -45,7 +45,7 @@ class fancyGalleryGlobal extends baseModule
 				FROM %pfx%fancygallery_album
 				WHERE title LIKE '$q'
 				ORDER BY title
-				LIMIT 0, 30
+				LIMIT 30 OFFSET 0
 			";
 			
 		json(dbExfetch($sql, -1));
