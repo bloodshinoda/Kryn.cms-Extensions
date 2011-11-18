@@ -236,6 +236,18 @@
           }
         }
       }
+    },
+    "stores": {
+      "title": "Stores",
+      "isLink": false,
+      "childs": {
+        "categories": {
+          "type": "store",
+          "table": "fancygallery_category",
+          "label": "title",
+          "id": "rsn"
+        }
+      }
     }
   },
   "plugins" : {
@@ -339,12 +351,9 @@
         },
         "categories" : {
           "label"	: "Category\/s",
-          "type"	: "select",
+          "type"	: "textlist",
           "multi"	: true,
-          "table"	: "fancygallery_category",
-          "table_label" : "title",
-          "table_id" : "rsn",
-          "empty"	: false
+          "store"	: "admin/fancygallery/stores/categories"
         }
       }
     ],
