@@ -670,7 +670,8 @@ var fancygallery_fancygallery = new Class({
 		this.imageFields[index].title = new ka.field({
 			label: _('Title'),
 			type: 'text',
-			value: title
+			value: title,
+			panel_width: '100%'
 		}).inject(imgFields);
 		
 		// Description
@@ -678,7 +679,8 @@ var fancygallery_fancygallery = new Class({
 			label: _('Description'),
 			type: 'textarea',
 			height: '3.5em',
-			value: description
+			value: description,
+			panel_width: '100%'
 		}).inject(imgFields);
 		
 		// ORDER PART
