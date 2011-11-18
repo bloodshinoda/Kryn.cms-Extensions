@@ -83,6 +83,10 @@ input.fg-search
 	width: 155px;
 }
 
+.image-fields {
+    width: 300px;
+}
+
 .image-block .image-fields
 {
 	float: left;
