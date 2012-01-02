@@ -144,7 +144,6 @@ class fancygallery extends baseModule
 		$pages = 1;
 		if($count > 0)
 			$pages = ceil($count / $perPage);
-			
 		if($maxPages == 0)
 			$pConf['maxPages'] = $pages;
 			
@@ -154,28 +153,19 @@ class fancygallery extends baseModule
 		// Get albums
 		$list = dbExfetch($sql, DB_FETCH_ALL);
 		
-		// Load additional info
-		switch($display)
-		{
-			case 'thumb':
-				self::addImages($list, 1);
-				break;
-				
-			case 'thumbs':
-				self::addImages($list, $thumbCount);
-				break;
-				
-			case 'infinite':
-			case 'panningzooming':
-				self::addImages($list);
-				break;
-		}
+		// Adjust the number of thumbnails shown
+        $imgCount = 0;
+        if($display == 'thumb')
+            $imgCount = 1;
+        else if($display == 'thumbs')
+            $imgCount = $thumbCount;
+
+        // Load image and thumbnail information
+        foreach($list as &$album)
+            self::addImages($album, $imgCount);
 		
-		//tAssign('debug', print_r($list, true));
-		
-		// Assign albums
+		// Assign albums and config
 		tAssign('albums', $list);
-		
 		tAssign('pConf', $pConf);
 		
 		kryn::addJs("kryn/mootools-core.js");
@@ -188,39 +178,42 @@ class fancygallery extends baseModule
 		return tFetch("fancygallery/viewalbums/$display/$template.tpl");
 	}
 	
-	private static function addImages(&$list, $amount=0)
+	private static function addImages(&$album, $amount=0)
 	{
-		foreach($list as $k=>$v)
-		{
-			$album_rsn = $v['rsn'];
-			$sql = "
-				SELECT hash, title, description
-				FROM %pfx%fancygallery_image i
-				WHERE
-					    album = $album_rsn
-					AND hidden = 0
-				ORDER BY order_ 
-			";
-			
-			if($amount > 0)
-				$sql .= "LIMIT 0, $amount";
-			
-			$imgs = dbExfetch($sql, -1);
-			
-			foreach($imgs as $imgNr=>$img)
-			{
-				$imgs[$imgNr]["imgLoc"] = 'inc/template/fancygallery/upload/'.$v['hash'].'/'.$img["hash"];
-				$imgs[$imgNr]["thumbLoc"] = 'inc/template/fancygallery/upload/'.$v['hash'].'/t/'.$img["hash"];
-			}
-			
-			if(!count($imgs))
-				$imgs[] = array(
-					"imgLoc" => "inc/template/fancygallery/empty.png",
-					"thumbLoc" => "inc/template/fancygallery/empty.png"
-				);
-			
-			$list[$k]['images'] = $imgs;
-		}
+        // Base SQL query
+        $rsn = $album['rsn'];
+        $sql = "
+            SELECT hash, title, description
+            FROM %pfx%fancygallery_image i
+            WHERE
+                    album = $rsn
+                AND hidden = 0
+            ORDER BY order_
+        ";
+
+        // Set limit when needed
+        if($amount > 0)
+            $sql .= "LIMIT $amount";
+
+        // Get images
+        $images = dbExfetch($sql, -1);
+
+        // Process all images, correct locations
+        foreach($images as &$img)
+        {
+            $img['imgLoc'] = 'inc/template/fancygallery/upload/'.$album['hash'].'/'.$img["hash"];
+            $img['thumbLoc'] = 'inc/template/fancygallery/upload/'.$album['hash'].'/t/'.$img["hash"];
+        }
+
+        if(!count($images))
+        {
+            $images[] = array(
+                'imgLoc' => 'inc/template/fancygallery/empty.png',
+                'thumbLoc' => 'inc/template/fancygallery/empty.png'
+            );
+        }
+
+        $album['images'] = $images;
 	}
 	
 	public static function detailAlbum( $pConf )
@@ -242,7 +235,7 @@ class fancygallery extends baseModule
         ";
         $album = dbExfetch($sql, 1);
         tAssign('album', $album);
-        
+
         $sql = "
             SELECT i.*
             FROM %pfx%fancygallery_image i
