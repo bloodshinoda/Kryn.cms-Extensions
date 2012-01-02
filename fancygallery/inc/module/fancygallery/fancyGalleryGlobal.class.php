@@ -458,9 +458,9 @@ class fancyGalleryGlobal extends krynModule
 		dbDelete('fancygallery_album', "rsn = $rsn");
 		
 		// Delete album from harddisk
-		$uploadBaseDir = dirname(__FILE__).'/../../upload/fancygallery/';
-		if(is_dir($uploadBaseDir.$hash.'/'))
-			delDir($uploadBaseDir.$hash.'/');
+        $dir = 'inc/template/fancygallery/upload/'.$hash;
+		if(is_dir($dir))
+			delDir($dir);
 		
 		json(1);
 	}
@@ -484,17 +484,20 @@ class fancyGalleryGlobal extends krynModule
 		
 		$deleteInfo = dbExfetch($sql, 1);
 		
-		// Delete from disk
-		$uploadBaseDir = dirname(__FILE__).'/../../upload/fancygallery/';
-		$fileLoc = $uploadBaseDir.$deleteInfo['albumHash'].'/'.$deleteInfo['imageHash'];
+		// File path
+		$pathImg = 'inc/template/fancygallery/upload/'.$deleteInfo['albumHash'].'/'.$deleteInfo['imageHash'];
+		$pathThumb = 'inc/template/fancygallery/upload/'.$deleteInfo['albumHash'].'/t/'.$deleteInfo['imageHash'];
 		
-		if(is_file($fileLoc))
-			@unlink($fileLoc);
+		if(is_file($pathImg))
+			@unlink($pathImg);
 		else
 			json(0); // File not found
+        if(is_file($pathThumb))
+            @unlink($pathThumb);
+        else
+            json(0); // File not found
 		
 		// Delete from database
-		// TODO: Should we concern order_ ?
 		dbDelete('fancygallery_image', "rsn = $rsn");
 		
 		json(1); // Success
