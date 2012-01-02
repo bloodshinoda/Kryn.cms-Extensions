@@ -6,7 +6,7 @@ class fancygallery extends baseModule
 	{
 		if(getArgv(2) == 'fancygallery' && getArgv(3) == 'global')
 		{
-			require('inc/modules/fancygallery/fancyGalleryGlobal.class.php');
+			require('inc/module/fancygallery/fancyGalleryGlobal.class.php');
 			$sub = getArgv(5);
 			switch(getArgv(4))
 			{
