@@ -87,15 +87,13 @@ class fancygallery extends baseModule
 		// Get settings from conf
 		$perPage = $pConf['perPage'] + 0;
 		$maxPages = $pConf['maxPages'] + 0;
-		$detailPage = $pConf['detailPage'];
 		$display = $pConf['display'];
 		$template = $pConf['template_'.$display];
 		$categories = $pConf['categories'];
 
 		// Possible extra info
 		$thumbCount = isset($pConf['thumbCount']) ? $pConf['thumbCount'] : 0;
-		$imageCount = isset($pConf['imageCount']) ? $pConf['imageCount'] : 0;
-		
+
 		// Get categories string
 		$getFromCats = implode(',', $categories);
 		
