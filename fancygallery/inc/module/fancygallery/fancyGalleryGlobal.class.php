@@ -1,6 +1,6 @@
 <?php
 
-class fancyGalleryGlobal extends baseModule
+class fancyGalleryGlobal extends krynModule
 {
 /**
  ** SEARCH
@@ -8,7 +8,7 @@ class fancyGalleryGlobal extends baseModule
 	
 	public static function searchCategories()
 	{
-		$q = getArgv('q'); // FIXME: Should be getArgv('q', true);
+		$q = getArgv('q', 1); // Category title
 		$q = str_replace('*', '%', $q);
 
 		// Query categories
@@ -26,7 +26,7 @@ class fancyGalleryGlobal extends baseModule
 	public static function searchAlbums()
 	{
 		$c = getArgv('c')+0; // Category rsn
-		$q = getArgv('q'); // FIXME: Should be getArgv('q', true);
+		$q = getArgv('q', 1); // Album title
 		$q = str_replace('*', '%', $q);
 		
 		if($c)
@@ -59,9 +59,9 @@ class fancyGalleryGlobal extends baseModule
 	{
 		global $user;
 		
-		$title = trim(getArgv('title'));
+		$title = trim(getArgv('title', 1));
 		
-		// Does the title already exist?
+		// Existing category?
 		$sql = "
 			SELECT rsn
 			FROM %pfx%fancygallery_category
@@ -73,7 +73,7 @@ class fancyGalleryGlobal extends baseModule
 			json(0); // Failed
 		
 		$vars = array(
-			'title' => $title,
+			'title' => getArgv('title'),
 			'creator' => $user->user_rsn,
 			'created' => time(),
 			'modifier' => $user->user_rsn,
@@ -104,27 +104,38 @@ class fancyGalleryGlobal extends baseModule
 		);
 		$rsn = dbInsert('fancygallery_album', $vars);
 		
-		// Base dir
-		$baseDir = dirname(__FILE__).'/../../';
-		
 		// Temp dir
-		$tempDir = $baseDir.'template/fancygallery/tempUpload/';
-		if(!is_dir($tempDir))
-			mkdir($tempDir);
-			
+        if(!krynFile::exists('/fancygallery/temp/'))
+        {
+            if(!krynFile::createFolder('/fancygallery/temp/'))
+            {
+                kLog('fancygallery', 'Temp dir could not be created.');
+                json(0);
+            }
+        }
+
 		// Upload base dir
-		$uploadBaseDir = $baseDir.'upload/fancygallery/';
-		if(!is_dir($uploadBaseDir))
-			mkdir($uploadBaseDir);
-			
+        if(!krynFile::exists('/fancygallery/upload/'))
+        {
+            if(!krynFile::createFolder('/fancygallery/upload/'))
+            {
+                kLog('fancygallery', 'Upload directory could not be created.');
+                json(0);
+            }
+        }
+
 		// Upload dir
-		do 
-		{ // New dir while dir exists
+		do
+		{ // New dir while hash dir already exists
 			$hash = md5($title.'-'.time());
-		} while(is_dir($uploadBaseDir.$hash.'/'));
-		mkdir($uploadBaseDir.$hash.'/'); // Images dir
-		mkdir($uploadBaseDir.$hash.'/t/'); // Thumbnail dir
-		
+        } while(krynFile::exists('/fancygallery/upload/'.$hash));
+        // Make dir for images and thumbnails (recursively)
+        if(!krynFile::createFolder('/fancygallery/upload/'.$hash.'/t/'))
+        {
+            kLog('fancygallery', 'Album directory could not be created ('.$hash.')');
+            json(0);
+        }
+
 		// Update database entry
 		dbUpdate(
 			'fancygallery_album',
@@ -143,35 +154,38 @@ class fancyGalleryGlobal extends baseModule
 		$fileName = getArgv('fileName');
 		$fileType = getArgv('fileType');
 		$album = getArgv('album')+0;
-		
-		// Preprocess file location (Strip pre and post ", change \/ into /)
+
+		// Pre process file location (Strip pre and post ", change \/ into /)
 		$fileLocation = str_replace('\\/', '/', substr($fileLocation, 1, strlen($fileLocation)-2));
 		$fileLocation = str_replace('//', '/', $fileLocation);
-		// Remove / prefix
-		if(substr($fileLocation, 0, 1) == '/')
-			$fileLocation = substr($fileLocation, 1);
-		
+
 		// Get album info
 		$albumInfo = dbExfetch("SELECT hash FROM %pfx%fancygallery_album WHERE rsn=$album", 1);
 		if($albumInfo === false)
+        {
+            kLog('fancygallery', 'Requested album not found ('.$album.')');
 			json(0); // Album not found
-			
-		// Move file
-		$baseDir = dirname(__FILE__).'/../../';
-		$oldLoc = $baseDir . 'template/' . $fileLocation;
-		$newDir = $baseDir . 'upload/fancygallery/' . $albumInfo['hash'] . '/';
-		
+        }
+
+        // Album path
+        $albumPath = '/fancygallery/upload/' . $albumInfo['hash'] . '/';
+
+        // Make hashed filename and check existence
 		do
 		{
 			$hash = md5($fileName.'-'.time());
-			$newLoc = $newDir . $hash . $fileType;
-		} while(is_file($newLoc));
-		
-		if(!rename($oldLoc, $newLoc))
-			json(0);
-			
+			$newLoc = $albumPath . $hash . $fileType;
+		} while(krynFile::exists($newLoc));
+
+        // Move file to new location
+        if(!krynFile::move($fileLocation, $newLoc))
+        {
+            kLog('fancygallery', 'Moving file failed. From \''.$fileLocation.'\' to \''.$newLoc.'\'');
+            json(0);
+        }
+
 		// Create small thumbnail for fancygallery (fixed size of 150x100)
-		self::createThumbnail($newLoc, $newDir.'t/'.$hash.$fileType, 150, 100);
+		self::createThumbnail($newLoc, $albumPath.'t/'.$hash.$fileType, 150, 100);
 		
 		// Get last number from order
 		$orderInfo = dbExfetch("SELECT order_ FROM %pfx%fancygallery_image WHERE album=$album ORDER BY order_ DESC", 1);
@@ -196,7 +210,6 @@ class fancyGalleryGlobal extends baseModule
 			'modifier' => $user->user_rsn,
 			'modified' => time()
 		);
-		
 		$rsn = dbInsert('fancygallery_image', $vars);
 		
 		json(array(
@@ -217,19 +230,34 @@ class fancyGalleryGlobal extends baseModule
 	 * @param string $tFile Thumbnail location
 	 * @param integer $width Max width of the thumbnail
 	 * @param integer $height Max height of the thumbnail (excess will be cropped)
+     * @return bool True on success
 	 */
 	private static function createThumbnail($sFile, $tFile, $width, $height)
 	{
-		if(!is_file($sFile))
-			return false; // Image not found
-		if(is_file($tFile))
-			return false; // Thumbnail already exists
-			
+        if(!krynFile::exists($sFile))
+        { // Image not found
+            kLog('fancygallery', 'Can not create thumbnail: Source file does not exist. ('.$sFile.')');
+            return false;
+        }
+		if(krynFile::exists($tFile))
+        { // Thumbnail already exists
+            kLog('fancygallery', 'Can not create thumbnail: Thumbnail already exists. ('.$tFile.')');
+			return false;
+        }
+
+        // TODO: Find a good alternative for getimagesize and imagesave, now I need to prepend 'inc/template'
+        $sFile = 'inc/template'.$sFile;
+        $tFile = 'inc/template'.$tFile;
+
+        // Get image info
 		list($sWidth, $sHeight, $sType) = getimagesize($sFile);
 		
 		// 1 = GIF, 2 = JPG, 3 = PNG, 4 = SWF, 5 = PSD, 6 = BMP,
 		// 7 = TIFF(orden de bytes intel), 8 = TIFF(orden de bytes motorola),
-		// 9 = JPC, 10 = JP2, 11 = JPX, 12 = JB2, 13 = SWC, 14 = IFF, 15 = WBMP, 16 = XBM. 
+		// 9 = JPC, 10 = JP2, 11 = JPX, 12 = JB2, 13 = SWC, 14 = IFF, 15 = WBMP, 16 = XBM.
+        $imgCreate = null;
+        $imgSave = null;
+
 		switch($sType)
 		{
 			case 1:
@@ -245,17 +273,31 @@ class fancyGalleryGlobal extends baseModule
 				$imgSave = 'imagepng';
 				break;
 		}
-		
-		$imgS = $imgCreate($sFile); // Source image
-		$imgT = imagecreatetruecolor($width, $height); // Thumbnail image
-		
+
+        // Check if the type is supported
+        if(!$imgCreate || !$imgSave)
+        { // Unsupported image type
+            $fileType = substr($sFile, strrpos($sFile, '.'));
+            kLog('fancygallery', 'Cannot create thumbnail: Unsupported image type. ('.$sType.': '.$fileType.')');
+            return false;
+        }
+
+        // Create images from source and for the thumbnail
+		$imgSource = $imgCreate($sFile); // Source image
+		$imgThumb  = imagecreatetruecolor($width, $height); // Thumbnail image
+
+        // Crop height when needed
 		$scaleWidth = $sWidth / $width;
-		$copyHeight = $height * $scaleWidth; // Crop height when needed
+		$copyHeight = $height * $scaleWidth;
+        // Copy height should not exceed source height
 		if($copyHeight > $sHeight)
-			$copyHeight = $sHeight; // Copy height should not exceed source height
-			
-		imagecopyresampled($imgT, $imgS, 0, 0, 0, 0, $width, $height, $sWidth, $copyHeight);
-		$imgSave($imgT, $tFile);
+			$copyHeight = $sHeight;
+		// Resample source image into thumbnail
+		imagecopyresampled($imgThumb, $imgSource, 0, 0, 0, 0, $width, $height, $sWidth, $copyHeight);
+        // Save thumbnail
+		$imgSave($imgThumb, $tFile);
+
+        return true;
 	}
 
 /**
@@ -416,9 +458,9 @@ class fancyGalleryGlobal extends baseModule
 		dbDelete('fancygallery_album', "rsn = $rsn");
 		
 		// Delete album from harddisk
-		$uploadBaseDir = dirname(__FILE__).'/../../upload/fancygallery/';
-		if(is_dir($uploadBaseDir.$hash.'/'))
-			delDir($uploadBaseDir.$hash.'/');
+        $dir = 'inc/template/fancygallery/upload/'.$hash;
+		if(is_dir($dir))
+			delDir($dir);
 		
 		json(1);
 	}
@@ -442,17 +484,20 @@ class fancyGalleryGlobal extends baseModule
 		
 		$deleteInfo = dbExfetch($sql, 1);
 		
-		// Delete from disk
-		$uploadBaseDir = dirname(__FILE__).'/../../upload/fancygallery/';
-		$fileLoc = $uploadBaseDir.$deleteInfo['albumHash'].'/'.$deleteInfo['imageHash'];
+		// File path
+		$pathImg = 'inc/template/fancygallery/upload/'.$deleteInfo['albumHash'].'/'.$deleteInfo['imageHash'];
+		$pathThumb = 'inc/template/fancygallery/upload/'.$deleteInfo['albumHash'].'/t/'.$deleteInfo['imageHash'];
 		
-		if(is_file($fileLoc))
-			@unlink($fileLoc);
+		if(is_file($pathImg))
+			@unlink($pathImg);
 		else
 			json(0); // File not found
+        if(is_file($pathThumb))
+            @unlink($pathThumb);
+        else
+            json(0); // File not found
 		
 		// Delete from database
-		// TODO: Should we concern order_ ?
 		dbDelete('fancygallery_image', "rsn = $rsn");
 		
 		json(1); // Success

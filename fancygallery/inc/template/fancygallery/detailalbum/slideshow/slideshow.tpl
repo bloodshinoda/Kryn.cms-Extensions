@@ -35,7 +35,7 @@
     
     window.addEvent('domready', function() {
         
-        {foreach $images as $image}
+        {foreach $album.images as $image}
             addImage("{$image.hash}", "t/{$image.hash}", "{$image.title}", "{$image.description}");
         {/foreach}
         
@@ -88,7 +88,7 @@
         // hu (string)
         // Path to the image directory, relative or absolute, default is the root directory of the website, 
         // use an empty string for the same directory as the webpage. 
-        options.hu = "inc/upload/fancygallery/{$album.hash}/";
+        options.hu = "inc/template/fancygallery/upload/{$album.hash}/";
         
         // Overlap (boolean: default true)
         // Whether images overlap in the basic show, or if the first image transitions out before the second transitions in. 
@@ -98,8 +98,7 @@
         // Whether the show should attempt to resize images, based on the shortest side (default) or longest side ("fit")
         // or resize without preserving proportions ("stretch"). Set to false to disable image resizing.
         options.resize = "fit";  
-        
-        //alert(dump(options));
+
         var myShow = new Slideshow('fancygallery{$rsn}', data, options);
     });
 </script>

@@ -8,9 +8,9 @@
 
 <div class="fancygallery_thumbs">
     
-    {foreach $images as $image}
+    {foreach $album.images as $image}
     <div class="thumb">
-        <a rel="lightbox-{$rsn}" title="{$image.description}" href="inc/upload/fancygallery/{$album.hash}/{$image.hash}"><img src="inc/upload/fancygallery/{$album.hash}/t/{$image.hash}" alt="{$image.description}" /></a>
+        <a rel="lightbox-{$rsn}" title="{$image.description}" href="{$image.imgLoc}"><img src="{$image.thumbLoc}" alt="{$image.description}" /></a>
     </div>
     {/foreach}
     <div style="clear: both;"></div>

@@ -17,7 +17,7 @@ var fancygallery_fancygallery = new Class({
 		this.win = pWindow;
 		this.win.content.setStyle('overflow', 'hidden');
 		this.pGlobal = _path+'admin/fancygallery/global/';
-		this.pImages = 'inc/upload/fancygallery/';
+		this.pImages = 'inc/template/fancygallery/upload/';
 		this._addHookToClose();
 		this._createLayout();
 		
@@ -39,7 +39,7 @@ var fancygallery_fancygallery = new Class({
 				url: _path+'admin/files/deleteFile',
 				noCache: 1
 			}).post({
-				path: '/fancygallery/tempUpload/',
+				path: '/fancygallery/temp/',
 				name: _sid
 			});
 		}.bind(this));
@@ -315,12 +315,11 @@ var fancygallery_fancygallery = new Class({
 		this.tabFields['images']['upload'] = new ka.field({
 			label: 'Upload new image(s)',
 			type: 'multiUpload',
-			savepath: '/fancygallery/tempUpload/',
-			uploadpath: 'admin/backend/window/sessionbasedFileUpload/',
-			fileNameConverter: 'fgFileNameConvert',
-			upload: '_uploadCallback'
+			savepath: '/fancygallery/temp/',
+			uploadpath: 'admin/backend/window/sessionbasedFileUpload/overwrite:1/',
+			fileNameConverter: 'fgFileNameConvert'
 		}, panel, {win: this.win});
-		this.tabFields['images']['upload'].main.getElement('div.ka-field-field').getElement('input').setStyle('width', '90%');
+		this.tabFields['images']['upload'].main.getElement('div.ka-field-field').getElement('input').setStyle('width', '75%');
 		this.tabFields['images']['upload'].obj.addEvent('success', function(pFile, pSecParam) { this._uploadCallback(pFile, pSecParam) }.bind(this));
 		
 		this.multiUploadFileContainer = this.tabFields['images']['upload'].main.getElement('div.multiUpload-fileContainer');
@@ -339,7 +338,7 @@ var fancygallery_fancygallery = new Class({
 	_uploadCallback: function(pFile, pFileLocation)
 	{
 		this.tabButtons['images'].startTip(_('Adding image(s) ...'));
-		
+
 		new Request.JSON({
 			url: this.pGlobal+'add/image',
 			noCache: 1,
