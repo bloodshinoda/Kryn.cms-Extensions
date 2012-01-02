@@ -91,7 +91,7 @@ class fancygallery extends baseModule
 		$display = $pConf['display'];
 		$template = $pConf['template_'.$display];
 		$categories = $pConf['categories'];
-		
+
 		// Possible extra info
 		$thumbCount = isset($pConf['thumbCount']) ? $pConf['thumbCount'] : 0;
 		$imageCount = isset($pConf['imageCount']) ? $pConf['imageCount'] : 0;
@@ -211,14 +211,14 @@ class fancygallery extends baseModule
 			
 			foreach($imgs as $imgNr=>$img)
 			{
-				$imgs[$imgNr]["imgLoc"] = 'inc/upload/fancygallery/'.$v['hash'].'/'.$img["hash"];
-				$imgs[$imgNr]["thumbLoc"] = 'inc/upload/fancygallery/'.$v['hash'].'/t/'.$img["hash"];
+				$imgs[$imgNr]["imgLoc"] = 'inc/template/fancygallery/upload/'.$v['hash'].'/'.$img["hash"];
+				$imgs[$imgNr]["thumbLoc"] = 'inc/template/fancygallery/upload/'.$v['hash'].'/t/'.$img["hash"];
 			}
 			
 			if(!count($imgs))
 				$imgs[] = array(
-					"imgLoc" => "../../../../template/fancygallery/empty.png",
-					"thumbLoc" => "../../../../template/fancygallery/empty.png"
+					"imgLoc" => "inc/template/fancygallery/empty.png",
+					"thumbLoc" => "inc/template/fancygallery/empty.png"
 				);
 			
 			$list[$k]['images'] = $imgs;
