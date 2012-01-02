@@ -234,19 +234,12 @@ class fancygallery extends baseModule
                 AND c.rsn = a.category
         ";
         $album = dbExfetch($sql, 1);
-        tAssign('album', $album);
 
-        $sql = "
-            SELECT i.*
-            FROM %pfx%fancygallery_image i
-            WHERE
-                    i.album = $albumRsn
-                AND i.hidden = 0
-            ORDER BY i.order_
-        ";
-        $images = dbExfetch($sql, -1);
-        
-        tAssign('images', $images);
+        // Add images to album
+        self::addImages($album);
+
+        // Assign album
+        tAssign('album', $album);
         
         // Check if width and height are set, if not, use defaults (700x700)
         if($pConf["width"]+0 == 0)
