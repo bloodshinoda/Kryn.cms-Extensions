@@ -8,7 +8,7 @@ class fancyGalleryGlobal extends baseModule
 	
 	public static function searchCategories()
 	{
-		$q = getArgv('q'); // FIXME: Should be getArgv('q', true);
+		$q = getArgv('q', 1); // Category title
 		$q = str_replace('*', '%', $q);
 
 		// Query categories
@@ -26,7 +26,7 @@ class fancyGalleryGlobal extends baseModule
 	public static function searchAlbums()
 	{
 		$c = getArgv('c')+0; // Category rsn
-		$q = getArgv('q'); // FIXME: Should be getArgv('q', true);
+		$q = getArgv('q', 1); // Album title
 		$q = str_replace('*', '%', $q);
 		
 		if($c)
@@ -59,9 +59,9 @@ class fancyGalleryGlobal extends baseModule
 	{
 		global $user;
 		
-		$title = trim(getArgv('title'));
+		$title = trim(getArgv('title', 1));
 		
-		// Does the title already exist?
+		// Existing category?
 		$sql = "
 			SELECT rsn
 			FROM %pfx%fancygallery_category
@@ -73,7 +73,7 @@ class fancyGalleryGlobal extends baseModule
 			json(0); // Failed
 		
 		$vars = array(
-			'title' => $title,
+			'title' => getArgv('title'),
 			'creator' => $user->user_rsn,
 			'created' => time(),
 			'modifier' => $user->user_rsn,
