@@ -104,27 +104,38 @@ class fancyGalleryGlobal extends baseModule
 		);
 		$rsn = dbInsert('fancygallery_album', $vars);
 		
-		// Base dir
-		$baseDir = dirname(__FILE__).'/../../';
-		
 		// Temp dir
-		$tempDir = $baseDir.'template/fancygallery/tempUpload/';
-		if(!is_dir($tempDir))
-			mkdir($tempDir);
-			
+        if(!krynFile::exists('/fancygallery/temp/'))
+        {
+            if(!krynFile::createFolder('/fancygallery/temp/'))
+            {
+                kLog('fancygallery', 'Temp dir could not be created.');
+                json(0);
+            }
+        }
+
 		// Upload base dir
-		$uploadBaseDir = $baseDir.'upload/fancygallery/';
-		if(!is_dir($uploadBaseDir))
-			mkdir($uploadBaseDir);
-			
+        if(!krynFile::exists('/fancygallery/upload/'))
+        {
+            if(!krynFile::createFolder('/fancygallery/upload/'))
+            {
+                kLog('fancygallery', 'Upload directory could not be created.');
+                json(0);
+            }
+        }
+
 		// Upload dir
-		do 
-		{ // New dir while dir exists
+		do
+		{ // New dir while hash dir already exists
 			$hash = md5($title.'-'.time());
-		} while(is_dir($uploadBaseDir.$hash.'/'));
-		mkdir($uploadBaseDir.$hash.'/'); // Images dir
-		mkdir($uploadBaseDir.$hash.'/t/'); // Thumbnail dir
-		
+        } while(krynFile::exists('/fancygallery/upload/'.$hash));
+        // Make dir for images and thumbnails (recursively)
+        if(!krynFile::createFolder('/fancygallery/upload/'.$hash.'/t/'))
+        {
+            kLog('fancygallery', 'Album directory could not be created ('.$hash.')');
+            json(0);
+        }
+
 		// Update database entry
 		dbUpdate(
 			'fancygallery_album',
