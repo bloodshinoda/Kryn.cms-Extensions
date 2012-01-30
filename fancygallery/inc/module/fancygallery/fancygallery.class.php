@@ -122,7 +122,7 @@ class fancygallery extends baseModule
 				AND (a.hide_ = 0 OR a.hide_ >= $now)
 			ORDER BY
 				a.modified DESC
-			LIMIT $start, $perPage
+			LIMIT $perPage OFFSET $start
 		";
 		
 		$sqlCount = "
