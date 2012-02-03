@@ -1,5 +1,5 @@
 {
-  "version": "0.0.6",
+  "version": "0.0.7",
   "owner": "93",
   "community": "1",
   "category": "2",
@@ -364,6 +364,21 @@
           "label"     : "Add title",
           "type"      : "checkbox",
           "value"     : 1
+        },
+        "single": {
+          "label": "Show single album",
+          "desc": "Show a single selected album?",
+          "type": "checkbox",
+          "depends": {
+              "album": {
+                  "needValue": 1,
+                  "label": "Select album",
+                  "type": "select",
+                  "table": "fancygallery_album",
+                  "table_label": "title",
+                  "table_id": "rsn"
+              }
+          }
         },
         "display" : {
           "label"   : "Display style",

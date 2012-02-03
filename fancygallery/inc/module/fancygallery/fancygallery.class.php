@@ -223,7 +223,7 @@ class fancygallery extends baseModule
         $template = $pConf['template_'.$display];
         
         // Get images
-        $albumRsn = getArgv('e1')+0;
+        $albumRsn = $pConf['single'] ? $pConf['album'] : getArgv('e1')+0;
         
         $sql = "
             SELECT a.*, c.title AS categoryTitle
